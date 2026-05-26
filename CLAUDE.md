@@ -14,14 +14,39 @@ ZMK firmware keymap for Hillside46 split keyboard (nice_nano_v2 controller).
 
 | # | Название        | Описание                                 |
 |---|-----------------|------------------------------------------|
-| 0 | DEF             | QWERTY, homerow mods                     |
-| 1 | NUM             | Цифры, символы, F-клавиши               |
-| 2 | NAV             | Навигация, символы, медиа               |
+| 0 | DEF             | QWERTY, homerow mods (Win/Lin)           |
+| 1 | NUM             | Цифры, символы, F-клавиши (общий)        |
+| 2 | NAV             | Навигация, символы, медиа (Win/Lin)      |
 | 3 | HK              | Hotkeys (Alt+N комбо, window management) |
-| 4 | ADJ             | Bluetooth, system (NUM+NAV одновременно) |
-| 5 | FZ              | FancyZones, управление окнами            |
+| 4 | ADJ             | Bluetooth, system, переключение ОС       |
+| 5 | FZ              | FancyZones, управление окнами (Win)      |
+| 6 | DEF_MAC         | QWERTY для macOS                         |
+| 7 | NAV_MAC         | Навигация для macOS                      |
+| 8 | HK_MAC          | Hotkeys для macOS (пока пустой)          |
 
-ADJ активируется через conditional_layer при одновременном удержании NUM и NAV.
+ADJ активируется через conditional_layer при одновременном удержании NUM и NAV
+(работает и с NAV, и с NAV_MAC — два tri_layer).
+
+## Целевые ОС (Win/Lin ↔ macOS)
+
+Конфиг держит две параллельные базы:
+- **Win/Lin** (по умолчанию при загрузке): слои DEF / NAV / HK / FZ
+- **macOS**: слои DEF_MAC / NAV_MAC / HK_MAC
+
+Переключение — клавишами в слое ADJ (верхний ряд левой половины, над BT_SEL 0/1):
+- над BT_SEL 0 → `&to DEF` (Win/Lin база)
+- над BT_SEL 1 → `&to DEF_MAC` (mac база)
+
+Конвенция модификаторов на mac: `LGUI`=Cmd, `LALT`=Option, `LCTRL`=Ctrl.
+
+### Известные ограничения mac-режима
+- При загрузке/смене батареи клавиатура всегда стартует на Win-базе (layer 0) —
+  ZMK штатно не запоминает выбор. Нужно нажать переключатель в ADJ.
+- Combos clipboard (cut/copy/paste) и переключения языка работают **только** на
+  Win/Lin (Ctrl-based). На mac — Cmd+C/V вручную или ремап на стороне OS.
+  Символьные combos и F-клавиши работают на обеих базах.
+- Управление окнами на mac (HK_MAC / Rectangle) пока не реализовано — TODO после
+  установки Rectangle.
 
 ## Сборка
 

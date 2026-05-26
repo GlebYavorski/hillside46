@@ -28,38 +28,39 @@
             compatible = "zmk,combos";
 
             /* Clipboard */
-            COMBO(cut,        &kp Cut,        26 28,     DEF,          COMBO_TERM_SLOW, COMBO_QUICK_TAP_MS)
-            COMBO(copy,       &kp Copy,       26 27,     DEF,          COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
-            COMBO(paste,      &kp Paste,      27 28,     DEF,          COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
+            /* Win/Lin only - Ctrl-based shortcuts, no point on mac (use Cmd manually) */
+            COMBO(cut,        &kp Cut,        26 28,     DEF,              COMBO_TERM_SLOW, COMBO_QUICK_TAP_MS)
+            COMBO(copy,       &kp Copy,       26 27,     DEF,              COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
+            COMBO(paste,      &kp Paste,      27 28,     DEF,              COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
 
-            /* Language switch */
-            COMBO(lang1,      &kp LC(LS(N1)), 15 16,     DEF,          COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
-            COMBO(lang2,      &kp LC(LS(N2)), 19 20,     DEF,          COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
+            /* Language switch - Win/Lin only (Punto Switcher style) */
+            COMBO(lang1,      &kp LC(LS(N1)), 15 16,     DEF,              COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
+            COMBO(lang2,      &kp LC(LS(N2)), 19 20,     DEF,              COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
 
             /* Symbols (home + bottom row vertical combos) */
-            COMBO(excl,       &kp EXCL,       13 25,     DEF,          COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
-            COMBO(at,         &kp AT,         14 26,     DEF,          COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
-            COMBO(hash,       &kp HASH,       15 27,     DEF,          COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
-            COMBO(dllr,       &kp DLLR,       16 28,     DEF,          COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
-            COMBO(prcnt,      &kp PRCNT,      17 29,     DEF,          COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
-            COMBO(caret,      &kp CARET,      18 32,     DEF,          COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
-            COMBO(amps,       &kp AMPS,       19 33,     DEF,          COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
-            COMBO(star,       &kp STAR,       20 34,     DEF,          COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
-            COMBO(lpar,       &kp LPAR,       21 35,     DEF,          COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
-            COMBO(rpar,       &kp RPAR,       22 36,     DEF,          COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
+            COMBO(excl,       &kp EXCL,       13 25,     DEF DEF_MAC,      COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
+            COMBO(at,         &kp AT,         14 26,     DEF DEF_MAC,      COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
+            COMBO(hash,       &kp HASH,       15 27,     DEF DEF_MAC,      COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
+            COMBO(dllr,       &kp DLLR,       16 28,     DEF DEF_MAC,      COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
+            COMBO(prcnt,      &kp PRCNT,      17 29,     DEF DEF_MAC,      COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
+            COMBO(caret,      &kp CARET,      18 32,     DEF DEF_MAC,      COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
+            COMBO(amps,       &kp AMPS,       19 33,     DEF DEF_MAC,      COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
+            COMBO(star,       &kp STAR,       20 34,     DEF DEF_MAC,      COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
+            COMBO(lpar,       &kp LPAR,       21 35,     DEF DEF_MAC,      COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
+            COMBO(rpar,       &kp RPAR,       22 36,     DEF DEF_MAC,      COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
 
             /* F-keys (top + home row vertical combos) */
-            COMBO(F1,         &kp F1,         1 13,      DEF,          COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
-            COMBO(F2,         &kp F2,         2 14,      DEF,          COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
-            COMBO(F3,         &kp F3,         3 15,      DEF,          COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
-            COMBO(F4,         &kp F4,         4 16,      DEF,          COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
-            COMBO(F5,         &kp F5,         5 17,      DEF,          COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
-            COMBO(F6,         &kp F6,         6 18,      DEF,          COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
-            COMBO(F7,         &kp F7,         7 19,      DEF,          COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
-            COMBO(F8,         &kp F8,         8 20,      DEF,          COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
-            COMBO(F9,         &kp F9,         9 21,      DEF,          COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
-            COMBO(F10,        &kp F10,        10 22,     DEF,          COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
-            COMBO(F11,        &kp F11,        11 23,     DEF,          COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
-            COMBO(F12,        &kp F12,         0 12,     DEF,          COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
+            COMBO(F1,         &kp F1,         1 13,      DEF DEF_MAC,      COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
+            COMBO(F2,         &kp F2,         2 14,      DEF DEF_MAC,      COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
+            COMBO(F3,         &kp F3,         3 15,      DEF DEF_MAC,      COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
+            COMBO(F4,         &kp F4,         4 16,      DEF DEF_MAC,      COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
+            COMBO(F5,         &kp F5,         5 17,      DEF DEF_MAC,      COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
+            COMBO(F6,         &kp F6,         6 18,      DEF DEF_MAC,      COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
+            COMBO(F7,         &kp F7,         7 19,      DEF DEF_MAC,      COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
+            COMBO(F8,         &kp F8,         8 20,      DEF DEF_MAC,      COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
+            COMBO(F9,         &kp F9,         9 21,      DEF DEF_MAC,      COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
+            COMBO(F10,        &kp F10,        10 22,     DEF DEF_MAC,      COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
+            COMBO(F11,        &kp F11,        11 23,     DEF DEF_MAC,      COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
+            COMBO(F12,        &kp F12,         0 12,     DEF DEF_MAC,      COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
     };
 };
