@@ -28,10 +28,15 @@
             compatible = "zmk,combos";
 
             /* Clipboard */
-            /* Win/Lin only - Ctrl-based shortcuts, no point on mac (use Cmd manually) */
+            /* Clipboard - Win/Lin (Ctrl-based) */
             COMBO(cut,        &kp Cut,        26 28,     DEF,              COMBO_TERM_SLOW, COMBO_QUICK_TAP_MS)
             COMBO(copy,       &kp Copy,       26 27,     DEF,              COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
             COMBO(paste,      &kp Paste,      27 28,     DEF,              COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
+
+            /* Clipboard - macOS (Cmd-based) */
+            COMBO(cut_mac,    &kp LG(X),      26 28,     DEF_MAC,          COMBO_TERM_SLOW, COMBO_QUICK_TAP_MS)
+            COMBO(copy_mac,   &kp LG(C),      26 27,     DEF_MAC,          COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
+            COMBO(paste_mac,  &kp LG(V),      27 28,     DEF_MAC,          COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
 
             /* Language switch - Win/Lin only (Punto Switcher style) */
             COMBO(lang1,      &kp LC(LS(N1)), 15 16,     DEF,              COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)

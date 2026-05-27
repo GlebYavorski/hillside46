@@ -162,16 +162,16 @@
                 };
 
                 def_mac_layer {
-/* QWERTY macOS - copy of DEF | MisCtl=Ctrl+Up (Mission Control) | thumbs: FZ->plain TAB/BSPC, HK->HK_MAC, NAV->NAV_MAC | HRM order unchanged (GASC)
+/* QWERTY macOS - copy of DEF | G-Tab=Cmd+Tab (switch to last app; tap toggles 2 most recent) | thumbs: FZ->plain TAB/BSPC, HK->HK_MAC, NAV->NAV_MAC | HRM order unchanged (GASC)
  * -------------------------------------------------------------------------------------------------------------------------------------
  * |  `    |   Q   |   W   |   E   |   R   |   T   |-----------------------------------|   Y   |   U   |   I   |   O   |   P   |  [/]  |
- * |MisCtl |   A   |   S   |   D   |   F   |   G   |-----------------------------------|   H   |   J   |   K   |   L   |   ;   |   '   |
+ * | G-Tab |   A   |   S   |   D   |   F   |   G   |-----------------------------------|   H   |   J   |   K   |   L   |   ;   |   '   |
  * |   -   |   Z   |   X   |   C   |   V   |   B   |  ESC  |-------------------|  INS  |   N   |   M   |   ,   |   .   |   /   |   \   |
  *                                 |HK/BSPC|  TAB  |NUM/SPC|HK/ENT |HK/ENT |NAV/CW | BSPC  | A/DEL |
  */
                         bindings = <
 &kp GRAVE      &kp Q &kp W &kp E &kp R &kp T &kp Y                                                    &kp U   &kp I  &kp O   &kp P    &mt RBKT LBKT
-&kp LC(UP)     &hrm LGUI A &hrm LALT S &hrm LSHIFT D &hrm LCTRL F  &kp G                              &kp H  &hrm RCTRL J &hrm RSHIFT K &hrm LALT L &hrm RGUI SEMI &kp SQT
+&kp LG(TAB)    &hrm LGUI A &hrm LALT S &hrm LSHIFT D &hrm LCTRL F  &kp G                              &kp H  &hrm RCTRL J &hrm RSHIFT K &hrm LALT L &hrm RGUI SEMI &kp SQT
 &kp MINUS      &kp Z &kp X &kp C &kp V &kp B   &kp ESC                                   &kp INSERT  &kp N  &kp M  &kp COMMA    &kp DOT &kp FSLH &kp BSLH
                                 &lt HK_MAC BSPC &kp TAB &lt NUM SPACE &lt HK_MAC RETURN     &lt HK_MAC RETURN &cw_ht NAV_MAC 0 &kp BSPC &mt LALT DEL
                         >;
@@ -242,17 +242,17 @@ XXX     XXX &kp LC(F1) &kp LC(F2) &kp LC(F3) &kp LG(N0) ___                     
                 };
 
                 nav_mac_layer {
-/* NAV macOS - copy of NAV | bottom-right adapted: A-<-/A-> word nav (Option), C-Tab/C-S-Tab tab switch
+/* NAV macOS - copy of NAV | bottom-right: A-<-/A-> word nav (Option), GA-tab = Cmd+Opt+arrow tab switch (universal: Firefox/Chrome/VSCode native, Ghostty via config)
  * -------------------------------------------------------------------------------------------------------------------------------------
  * |       |  F1   |  F2   |  F3   |  F4   |  F5   |-----------------------------------| HOME  | PG_DN | PG_UP |  END  |       | VOL+  |
  * |  KP=  |   !   |   @   |   #   |   $   |   %   |-----------------------------------| LEFT  | DOWN  |  UP   | RIGHT | RALT  |PL/NXT |
- * |       |  KP1  |  KP2  |  KP3  |  KP4  |  KP5  |       |-------------------|       |  A-<- | C-Tab |C-S-Tab|  A->  |       | VOL-  |
+ * |       |  KP1  |  KP2  |  KP3  |  KP4  |  KP5  |       |-------------------|       |  A-<- | GA->  | GA-<- |  A->  |       | VOL-  |
  *                                 |       |       |       |       |---|       |       |       |       |
  */
                         bindings = <
 XXX            &kp F1      &kp F2 &kp F3   &kp F4      &kp F5                                   &kp HOME      &kp PG_DN        &kp PG_UP       &kp END       XXX             &kp C_VOL_UP
 &kp KP_EQUAL   &hrm LGUI EXCL  &hrm LALT AT &hrm LSHIFT HASH &hrm LCTRL DLLR  &kp PRCNT          &kp LEFT      &kp DOWN     &kp UP          &kp RIGHT       &kp RALT        &td0
-XXX         &kp KP_N1   &kp KP_N2 &kp KP_N3 &kp KP_N4 &kp KP_N5  ___                        ___  &kp LA(LEFT)  &kp LC(TAB)      &kp LC(LS(TAB)) &kp LA(RIGHT)   XXX             &kp C_VOL_DN
+XXX         &kp KP_N1   &kp KP_N2 &kp KP_N3 &kp KP_N4 &kp KP_N5  ___                        ___  &kp LA(LEFT)  &kp LG(LA(RIGHT)) &kp LG(LA(LEFT)) &kp LA(RIGHT) XXX             &kp C_VOL_DN
                                                         ___ ___ ___ ___                 ___ ___ ___ ___
                         >;
                 };
