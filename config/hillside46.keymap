@@ -258,17 +258,18 @@ XXX         &kp KP_N1   &kp KP_N2 &kp KP_N3 &kp KP_N4 &kp KP_N5  ___            
                 };
 
                 hk_mac_layer {
-/* HOTKEYS macOS - placeholder, all keys empty. Fill in later (e.g. Rectangle window management).
+/* HOTKEYS macOS - left: window tiling via Hyper(GAC=Ctrl+Opt+Cmd)+key, needs macOS App Shortcuts (see CLAUDE.md) | right: H/L switch virtual desktop
+ * left 3x3 = on-screen position (corners=quarters, edges=halves, S=Fill) | F=Center, R=Return to previous size
  * -------------------------------------------------------------------------------------------------------------------------------------
- * |       |       |       |       |       |       |-----------------------------------|       |       |       |       |       |       |
- * |       |       |       |       |       |       |-----------------------------------|       |       |       |       |       |       |
- * |       |       |       |       |       |       |       |-------------------|       |       |       |       |       |       |       |
+ * |       |  TL   |  Top  |  TR   | Retrn |       |-----------------------------------|       |       |       |       |       |       |
+ * |       |  Lft  | Fill  |  Rgt  | Centr |       |-----------------------------------| C-<-  |       |       | C->   |       |       |
+ * |       |  BL   |  Bot  |  BR   |       |       |       |-------------------|       |       |       |       |       |       |       |
  *                                 |       |       |       |       |---|       |       |       |       |
  */
                         bindings = <
-XXX XXX XXX XXX XXX XXX                          XXX XXX XXX XXX XXX XXX
-XXX XXX XXX XXX XXX XXX                          XXX XXX XXX XXX XXX XXX
-XXX XXX XXX XXX XXX XXX ___                  ___ XXX XXX XXX XXX XXX XXX
+XXX  &kp LC(LA(LG(Q)))  &kp LC(LA(LG(W)))  &kp LC(LA(LG(E)))  &kp LC(LA(LG(R)))  XXX                          XXX XXX XXX XXX XXX XXX
+XXX  &kp LC(LA(LG(A)))  &kp LC(LA(LG(S)))  &kp LC(LA(LG(D)))  &kp LC(LA(LG(F)))  XXX                          &kp LC(LEFT) XXX XXX &kp LC(RIGHT) XXX XXX
+XXX  &kp LC(LA(LG(Z)))  &kp LC(LA(LG(X)))  &kp LC(LA(LG(C)))  XXX XXX ___                  ___ XXX XXX XXX XXX XXX XXX
                                 ___ ___ ___ ___              ___ ___ ___ ___
                         >;
                 };
