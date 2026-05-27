@@ -11,16 +11,17 @@
 #include <dt-bindings/zmk/outputs.h>
 
 // layer shortcuts, must match order in which they are defined below
+// bases (DEF, DEF_MAC) are lowest so momentary/overlay layers stack above them;
+// ADJ is highest so it shows above NAV_MAC when reached via NUM+NAV_MAC.
 #define DEF 0
-#define NUM 1
-#define NAV 2
-#define HK 3
-#define ADJ 4
+#define DEF_MAC 1
+#define NUM 2
+#define NAV 3
+#define HK 4
 #define FZ 5
-// macOS variants (switch via &to in ADJ layer)
-#define DEF_MAC 6
-#define NAV_MAC 7
-#define HK_MAC 8
+#define NAV_MAC 6
+#define HK_MAC 7
+#define ADJ 8
 
 #define Undo   LC(Z)
 #define Redo   LC(Y)
@@ -51,13 +52,13 @@
         conditional_layers {
             compatible = "zmk,conditional-layers";
             tri_layer {
-                if-layers = <1 2>;
-                then-layer = <4>;
+                if-layers = <2 3>;
+                then-layer = <8>;
             };
             // mac: NUM + NAV_MAC also reaches ADJ
             tri_layer_mac {
-                if-layers = <1 7>;
-                then-layer = <4>;
+                if-layers = <2 6>;
+                then-layer = <8>;
             };
         };
         behaviors {
@@ -160,6 +161,22 @@
                         >;
                 };
 
+                def_mac_layer {
+/* QWERTY macOS - copy of DEF | MisCtl=Ctrl+Up (Mission Control) | thumbs: FZ->plain TAB/BSPC, HK->HK_MAC, NAV->NAV_MAC | HRM order unchanged (GASC)
+ * -------------------------------------------------------------------------------------------------------------------------------------
+ * |  `    |   Q   |   W   |   E   |   R   |   T   |-----------------------------------|   Y   |   U   |   I   |   O   |   P   |  [/]  |
+ * |MisCtl |   A   |   S   |   D   |   F   |   G   |-----------------------------------|   H   |   J   |   K   |   L   |   ;   |   '   |
+ * |   -   |   Z   |   X   |   C   |   V   |   B   |  ESC  |-------------------|  INS  |   N   |   M   |   ,   |   .   |   /   |   \   |
+ *                                 |HK/BSPC|  TAB  |NUM/SPC|HK/ENT |HK/ENT |NAV/CW | BSPC  | A/DEL |
+ */
+                        bindings = <
+&kp GRAVE      &kp Q &kp W &kp E &kp R &kp T &kp Y                                                    &kp U   &kp I  &kp O   &kp P    &mt RBKT LBKT
+&kp LC(UP)     &hrm LGUI A &hrm LALT S &hrm LSHIFT D &hrm LCTRL F  &kp G                              &kp H  &hrm RCTRL J &hrm RSHIFT K &hrm LALT L &hrm RGUI SEMI &kp SQT
+&kp MINUS      &kp Z &kp X &kp C &kp V &kp B   &kp ESC                                   &kp INSERT  &kp N  &kp M  &kp COMMA    &kp DOT &kp FSLH &kp BSLH
+                                &lt HK_MAC BSPC &kp TAB &lt NUM SPACE &lt HK_MAC RETURN     &lt HK_MAC RETURN &cw_ht NAV_MAC 0 &kp BSPC &mt LALT DEL
+                        >;
+                };
+
                 numbers_layer {
 /* NUM - left: numpad 789/456/123 | right: symbols ^&*() and F6-F11 | -/ and +* are tap-dance
  * -------------------------------------------------------------------------------------------------------------------------------------
@@ -208,22 +225,6 @@ XXX     XXX &kp LC(F1) &kp LC(F2) &kp LC(F3) &kp LG(N0) ___                     
                         >;
                 };
 
-                adj_layer {
-/* ADJUST - active when NUM+NAV held simultaneously | WIN/MAC switch OS base layer
- * -------------------------------------------------------------------------------------------------------------------------------------
- * |       |  WIN  |  MAC  |       |       |       |-----------------------------------|       |  F11  |  F12  |PrtScr |EP_OFF | EP_ON |
- * | RESET | BT 0  | BT 1  | BT 2  | BT 3  | BT 4  |-----------------------------------|       |       |       |  INS  |       | RESET |
- * |       | LGUI  | LALT  | LCTRL | LSHIFT|       |BT CLR |-------------------|       |       |       |OUT_USB|OUT_BLE|       | BOOTL |
- *                                 |       |       |       |       |---|       |       |       |       |
- */
-                        bindings = <
-&none         &to DEF &to DEF_MAC &none &none         &none                                                                               &none       &kp   F11       &kp   F12        &kp PRINTSCREEN   &ext_power EP_OFF  &ext_power EP_ON
-&sys_reset    &bt  BT_SEL 0 &bt  BT_SEL 1 &bt  BT_SEL 2 &bt  BT_SEL 3 &bt  BT_SEL 4                                                       &none       &none           &none            &kp INS           &none           &sys_reset
-&none         &kp  LGUI     &kp  LALT     &kp  LCTRL    &kp LSHIFT    &none         &bt BT_CLR                             &none      &none       &none           &out  OUT_USB    &out  OUT_BLE  &none           &bootloader
-                                                        &trans        &trans        &trans        &trans         &trans    &trans     &trans      &trans 
-                        >;
-                };
-
                 fancyzones_layer {
 /* FANCYZONES - G=Win snap, GAC=Win+Alt+Ctrl FancyZones layouts, GC=Win+Ctrl desktops, SC=Shift+Ctrl
  * -------------------------------------------------------------------------------------------------------------------------------------
@@ -237,22 +238,6 @@ XXX     XXX &kp LC(F1) &kp LC(F2) &kp LC(F3) &kp LG(N0) ___                     
 &kp LG(LA(LC(N2)))      &kp LA(TAB)   &kp LG(N1)               &kp LG(N2)      &kp LG(N3)              &kp LG(LC(RIGHT))                                       &win_left &win_down  &win_up &win_right XXX XXX
 &kp LG(LA(LC(N1)))      &win_down     &win_left                &kp LG(PG_DN)   &win_right        &kp LC(LS(GRAVE)) ___                           ___    XXX &kp LG(PG_DN) &kp LG(PG_UP) XXX XXX XXX
                                                                                                                         ___ ___ ___ ___                   ___ ___ ___ ___
-                        >;
-                };
-
-                def_mac_layer {
-/* QWERTY macOS - copy of DEF | MisCtl=Ctrl+Up (Mission Control) | thumbs: FZ->plain TAB/BSPC, HK->HK_MAC, NAV->NAV_MAC | HRM order unchanged (GASC)
- * -------------------------------------------------------------------------------------------------------------------------------------
- * |  `    |   Q   |   W   |   E   |   R   |   T   |-----------------------------------|   Y   |   U   |   I   |   O   |   P   |  [/]  |
- * |MisCtl |   A   |   S   |   D   |   F   |   G   |-----------------------------------|   H   |   J   |   K   |   L   |   ;   |   '   |
- * |   -   |   Z   |   X   |   C   |   V   |   B   |  ESC  |-------------------|  INS  |   N   |   M   |   ,   |   .   |   /   |   \   |
- *                                 |HK/BSPC|  TAB  |NUM/SPC|HK/ENT |HK/ENT |NAV/CW | BSPC  | A/DEL |
- */
-                        bindings = <
-&kp GRAVE      &kp Q &kp W &kp E &kp R &kp T &kp Y                                                    &kp U   &kp I  &kp O   &kp P    &mt RBKT LBKT
-&kp LC(UP)     &hrm LGUI A &hrm LALT S &hrm LSHIFT D &hrm LCTRL F  &kp G                              &kp H  &hrm RCTRL J &hrm RSHIFT K &hrm LALT L &hrm RGUI SEMI &kp SQT
-&kp MINUS      &kp Z &kp X &kp C &kp V &kp B   &kp ESC                                   &kp INSERT  &kp N  &kp M  &kp COMMA    &kp DOT &kp FSLH &kp BSLH
-                                &lt HK_MAC BSPC &kp TAB &lt NUM SPACE &lt HK_MAC RETURN     &lt HK_MAC RETURN &cw_ht NAV_MAC 0 &kp BSPC &mt LALT DEL
                         >;
                 };
 
@@ -285,6 +270,22 @@ XXX XXX XXX XXX XXX XXX                          XXX XXX XXX XXX XXX XXX
 XXX XXX XXX XXX XXX XXX                          XXX XXX XXX XXX XXX XXX
 XXX XXX XXX XXX XXX XXX ___                  ___ XXX XXX XXX XXX XXX XXX
                                 ___ ___ ___ ___              ___ ___ ___ ___
+                        >;
+                };
+
+                adj_layer {
+/* ADJUST - active when NUM+NAV held simultaneously | WIN/MAC switch OS base layer
+ * -------------------------------------------------------------------------------------------------------------------------------------
+ * |       |  WIN  |  MAC  |       |       |       |-----------------------------------|       |  F11  |  F12  |PrtScr |EP_OFF | EP_ON |
+ * | RESET | BT 0  | BT 1  | BT 2  | BT 3  | BT 4  |-----------------------------------|       |       |       |  INS  |       | RESET |
+ * |       | LGUI  | LALT  | LCTRL | LSHIFT|       |BT CLR |-------------------|       |       |       |OUT_USB|OUT_BLE|       | BOOTL |
+ *                                 |       |       |       |       |---|       |       |       |       |
+ */
+                        bindings = <
+&none         &to DEF &to DEF_MAC &none &none         &none                                                                               &none       &kp   F11       &kp   F12        &kp PRINTSCREEN   &ext_power EP_OFF  &ext_power EP_ON
+&sys_reset    &bt  BT_SEL 0 &bt  BT_SEL 1 &bt  BT_SEL 2 &bt  BT_SEL 3 &bt  BT_SEL 4                                                       &none       &none           &none            &kp INS           &none           &sys_reset
+&none         &kp  LGUI     &kp  LALT     &kp  LCTRL    &kp LSHIFT    &none         &bt BT_CLR                             &none      &none       &none           &out  OUT_USB    &out  OUT_BLE  &none           &bootloader
+                                                        &trans        &trans        &trans        &trans         &trans    &trans     &trans      &trans 
                         >;
                 };
         };

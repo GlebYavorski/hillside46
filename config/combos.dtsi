@@ -37,6 +37,10 @@
             COMBO(lang1,      &kp LC(LS(N1)), 15 16,     DEF,              COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
             COMBO(lang2,      &kp LC(LS(N2)), 19 20,     DEF,              COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
 
+            /* Language switch - macOS, both combos send Ctrl+Space (toggle input source) */
+            COMBO(lang1_mac,  &kp LC(SPACE),  15 16,     DEF_MAC,          COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
+            COMBO(lang2_mac,  &kp LC(SPACE),  19 20,     DEF_MAC,          COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
+
             /* Symbols (home + bottom row vertical combos) */
             COMBO(excl,       &kp EXCL,       13 25,     DEF DEF_MAC,      COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
             COMBO(at,         &kp AT,         14 26,     DEF DEF_MAC,      COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
