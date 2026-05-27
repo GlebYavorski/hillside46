@@ -1,120 +1,147 @@
 # Hillside46 ZMK Config
 
-ZMK firmware keymap for Hillside46 split keyboard (nice_nano_v2 controller).
+ZMK firmware keymap for the Hillside46 split keyboard (nice!nano v2 controller).
+
+> This file is maintained in **English**. Always write and update it in English.
 
 ## Key files
 
-- `config/hillside46.keymap` — главный файл: слои, поведения, макросы
-- `config/combos.dtsi` — все комбо-клавиши (включается в keymap)
-- `config/hillside46.conf` — настройки Kconfig (bluetooth, sleep, RGB и т.д.)
-- `config/west.yml` — версия ZMK (сейчас pinned на v0.3.0)
-- `build.yaml` — матрица сборки для GitHub Actions (hillside46_left + hillside46_right)
+- `config/hillside46.keymap` — main file: layers, behaviors, macros
+- `config/combos.dtsi` — all combos (included from the keymap)
+- `config/hillside46.conf` — Kconfig settings (bluetooth, sleep, RGB, etc.)
+- `config/west.yml` — ZMK version (currently pinned to v0.3.0)
+- `build.yaml` — build matrix for GitHub Actions (hillside46_left + hillside46_right)
 
-## Слои
+## Layers
 
-Порядок важен: базы (DEF, DEF_MAC) — самые нижние, чтобы overlay-слои стекались
-поверх любой из них; ADJ — самый верхний, чтобы перекрывать NAV_MAC при вызове
-через NUM+NAV_MAC.
+Order matters: the bases (DEF, DEF_MAC) are the lowest so that momentary/overlay
+layers stack on top of either of them; ADJ is the highest so it overrides NAV_MAC
+when reached via NUM+NAV_MAC.
 
-| # | Название        | Описание                                 |
-|---|-----------------|------------------------------------------|
-| 0 | DEF             | QWERTY база (Win/Lin), homerow mods      |
-| 1 | DEF_MAC         | QWERTY база для macOS                     |
-| 2 | NUM             | Цифры, символы, F-клавиши (общий)        |
-| 3 | NAV             | Навигация, символы, медиа (Win/Lin)      |
-| 4 | HK              | Hotkeys (Alt+N комбо, window management) |
-| 5 | FZ              | FancyZones, управление окнами (Win)      |
-| 6 | NAV_MAC         | Навигация для macOS                      |
-| 7 | HK_MAC          | Тайлинг окон + Spaces (macOS)            |
-| 8 | ADJ             | Bluetooth, system, переключение ОС       |
+| # | Name    | Description                              |
+|---|---------|------------------------------------------|
+| 0 | DEF     | QWERTY base (Win/Lin), homerow mods      |
+| 1 | DEF_MAC | QWERTY base for macOS                    |
+| 2 | NUM     | Numbers, symbols, F-keys (shared)        |
+| 3 | NAV     | Navigation, symbols, media (Win/Lin)     |
+| 4 | HK      | Hotkeys (Alt+N combos, window management)|
+| 5 | FZ      | FancyZones, window management (Win)      |
+| 6 | NAV_MAC | Navigation for macOS                     |
+| 7 | HK_MAC  | Window tiling + Spaces (macOS)           |
+| 8 | ADJ     | Bluetooth, system, OS switching          |
 
-ADJ активируется через conditional_layer при одновременном удержании NUM и NAV
-(работает и с NAV, и с NAV_MAC — два tri_layer: `<2 3>` и `<2 6>` → 8).
+ADJ is activated via a conditional_layer when NUM and NAV are held simultaneously
+(works with both NAV and NAV_MAC — two tri_layer entries: `<2 3>` and `<2 6>` → 8).
 
-## Целевые ОС (Win/Lin ↔ macOS)
+## Target OSes (Win/Lin ↔ macOS)
 
-Конфиг держит две параллельные базы:
-- **Win/Lin** (по умолчанию при загрузке): слои DEF / NAV / HK / FZ
-- **macOS**: слои DEF_MAC / NAV_MAC / HK_MAC
+The config keeps two parallel bases:
+- **Win/Lin** (default on boot): layers DEF / NAV / HK / FZ
+- **macOS**: layers DEF_MAC / NAV_MAC / HK_MAC
 
-Переключение — клавишами в слое ADJ (верхний ряд левой половины, над BT_SEL 0/1):
-- над BT_SEL 0 → `&to DEF` (Win/Lin база)
-- над BT_SEL 1 → `&to DEF_MAC` (mac база)
+Switching is done with keys in the ADJ layer (top row of the left half, above BT_SEL 0/1):
+- above BT_SEL 0 → `&to DEF` (Win/Lin base)
+- above BT_SEL 1 → `&to DEF_MAC` (mac base)
 
-Конвенция модификаторов на mac: `LGUI`=Cmd, `LALT`=Option, `LCTRL`=Ctrl.
+Modifier convention on mac: `LGUI`=Cmd, `LALT`=Option, `LCTRL`=Ctrl.
 
-Порядок home-row mods различается между базами (выбран по частоте хоткейного
-модификатора в каждой ОС — он садится на самый сильный, указательный, палец):
-- **Win/Lin** (DEF, NAV): `GASC` — мизинец→указательный = Gui · Alt · Shift · **Ctrl**
-- **macOS** (DEF_MAC, NAV_MAC): `CASG` — мизинец→указательный = Ctrl · Alt · Shift · **Cmd**
+The home-row mod order differs between bases (chosen by how often each OS's primary
+hotkey modifier is used — it goes on the strongest finger, the index):
+- **Win/Lin** (DEF, NAV): `GASC` — pinky→index = Gui · Alt · Shift · **Ctrl**
+- **macOS** (DEF_MAC, NAV_MAC): `CASG` — pinky→index = Ctrl · Alt · Shift · **Cmd**
 
-То есть на маке Cmd и Ctrl меняются местами относительно Win: Cmd уходит с мизинца
-на указательный (A=Ctrl, S=Opt, D=Shift, F=Cmd и зеркально справа). Shift и Alt
-остаются на тех же пальцах в обеих ОС. Общий слой NUM не трогали — там HRM в win-порядке.
+So on mac, Cmd and Ctrl are swapped relative to Win: Cmd moves off the pinky onto
+the index (A=Ctrl, S=Opt, D=Shift, F=Cmd, mirrored on the right). Shift and Alt stay
+on the same fingers in both OSes. The shared NUM layer was left as-is — its HRM stays
+in Win order.
 
-### Известные ограничения mac-режима
-- При загрузке/смене батареи клавиатура всегда стартует на Win-базе (layer 0) —
-  ZMK штатно не запоминает выбор. Нужно нажать переключатель в ADJ.
-- Combos гейтятся по самому верхнему активному слою (`combo_active_on_layer` в ZMK),
-  поэтому на mac-базе срабатывают только mac-combos, на win-базе — win-combos, конфликта нет.
+### Known limitations of mac mode
+- On boot/battery swap the keyboard always starts on the Win base (layer 0) — ZMK
+  does not persist the choice. You must press the switch in ADJ.
+- Combos are gated by the topmost active layer (`combo_active_on_layer` in ZMK), so on
+  the mac base only mac combos fire and on the win base only win combos fire — no conflict.
 - Clipboard: Win/Lin — Ctrl (cut/copy/paste), mac — Cmd (LG(X)/LG(C)/LG(V)).
-- Переключение языка: Win/Lin — Punto Switcher (Ctrl+Shift+1/2), mac — Ctrl+Space
-  (оба combo, позиции 15-16 и 19-20).
-- Символьные combos и F-клавиши работают на обеих базах.
+- Language switch: Win/Lin — Punto Switcher (Ctrl+Shift+1/2), mac — Ctrl+Space
+  (both combos, positions 15-16 and 19-20).
+- Symbol combos and F-keys work on both bases.
 
-### Зависимости на стороне macOS
-- **Переключение вкладок** (NAV_MAC, Cmd+Opt+←/→): нативно в Firefox/Chrome/VSCode.
-  Для Ghostty добавить в `~/.config/ghostty/config`:
-  `keybind = super+alt+right=next_tab` и `keybind = super+alt+left=previous_tab`.
-- **Cmd+Tab** (DEF_MAC, на месте AC-Tab) переключает между приложениями (тап = два
-  последних приложения). Для переключения между ОКНАМИ (как alt-tab в Windows) — поставить
-  приложение AltTab; окна одного приложения — Cmd+` (backtick).
-- **Переключение столов** (HK_MAC, правая рука): `H`=`Ctrl+←`, `L`=`Ctrl+→` —
-  встроено в macOS, настройки не требует.
-- **Тайлинг окон** (HK_MAC, левая рука): нативный тайлинг macOS Sequoia/Tahoe, но
-  дефолты завязаны на клавишу Globe (её ZMK слать не умеет). Поэтому слой шлёт
-  аккорды Hyper (`Ctrl+Opt+Cmd`+буква), которые надо разово привязать к пунктам меню
-  в **System Settings → Keyboard → Keyboard Shortcuts → App Shortcuts → All Applications**
-  (`+`, ввести имя пункта меню точь-в-точь, нажать аккорд):
+### macOS-side dependencies
+- **Tab switching** (NAV_MAC, Cmd+Opt+←/→): native in Firefox/Chrome/VSCode.
+  For Ghostty add to `~/.config/ghostty/config`:
+  `keybind = super+alt+right=next_tab` and `keybind = super+alt+left=previous_tab`.
+- **Cmd+Tab** (DEF_MAC, on the AC-Tab key) switches between apps (tap = the two most
+  recent apps). To switch between WINDOWS (like alt-tab on Windows) install the AltTab
+  app; windows of a single app — Cmd+` (backtick).
+- **Spaces switching** (HK_MAC, right hand): `H`=`Ctrl+←`, `L`=`Ctrl+→` — built into
+  macOS, no setup required.
+- **Window tiling** (HK_MAC, left hand): native macOS Sequoia/Tahoe tiling, but the
+  defaults rely on the Globe key (which ZMK can't send). So the layer sends Hyper
+  (`Ctrl+Opt+Cmd`+letter) chords that must be bound once to menu items in
+  **System Settings → Keyboard → Keyboard Shortcuts → App Shortcuts → All Applications**
+  (`+`, type the menu item name exactly, press the chord):
 
-  | Клавиша слоя | Аккорд | Пункт меню (Window → Move & Resize) |
-  |---|---|---|
-  | Q / W / E | ⌃⌥⌘+Q / W / E | Top Left / Top / Top Right |
-  | A / S / D | ⌃⌥⌘+A / S / D | Left / Fill / Right |
+  | Layer key | Chord         | Menu item (Window → Move & Resize)  |
+  |-----------|---------------|-------------------------------------|
+  | Q / W / E | ⌃⌥⌘+Q / W / E | Top Left / Top / Top Right          |
+  | A / S / D | ⌃⌥⌘+A / S / D | Left / Fill / Right                 |
   | Z / X / C | ⌃⌥⌘+Z / X / C | Bottom Left / Bottom / Bottom Right |
-  | F / R     | ⌃⌥⌘+F / R     | Center / Return to Previous Size |
+  | F / R     | ⌃⌥⌘+F / R     | Center / Return to Previous Size    |
 
-## Сборка
+## Build
 
-Через GitHub Actions, но **только вручную** — workflow (`.github/workflows/build.yml`)
-настроен на `workflow_dispatch`, поэтому push (в любую ветку, включая `main`) сборку
-**НЕ** запускает. Запуск:
-- веб: Actions → workflow «Build» → «Run workflow» → выбрать ветку;
-- CLI: `gh workflow run build.yml --ref <branch>`.
+Via GitHub Actions, but **manual only** — the workflow (`.github/workflows/build.yml`)
+is configured with `workflow_dispatch`, so a push (to any branch, including `main`)
+does **NOT** start a build. Trigger it with:
+- web: Actions → "Build" workflow → "Run workflow" → pick the branch;
+- CLI: `gh workflow run build.yml --repo GlebYavorski/hillside46 --ref <branch>`.
 
-Собирать можно из любой ветки (не только `main`), но она должна быть запушена в `origin`.
-Артефакты (.uf2) скачиваются из завершившегося run (Actions → run → Artifacts).
+You can build from any branch (not only `main`), but it must be pushed to `origin`
+first. Artifacts (.uf2) are downloaded from the finished run (Actions → run → Artifacts).
 
-## Соглашения
+### After a firmware-affecting commit (automation rule)
 
-- Документация ведётся прямо в комментариях в коде
-- Каждый слой должен иметь ASCII-диаграмму раскладки в комментарии
+Whenever a commit changes **firmware files** — anything under `config/`
+(`hillside46.keymap`, `combos.dtsi`, `hillside46.conf`, `west.yml`) or the build
+matrix (`build.yaml`) — automatically follow up with:
+
+1. Push the branch to `origin` (never `upstream`).
+2. Trigger the build:
+   `gh workflow run build.yml --repo GlebYavorski/hillside46 --ref <branch>`
+3. Wait for it to finish, e.g.:
+   `gh run watch <run-id> --repo GlebYavorski/hillside46 --exit-status`
+4. Download the `.uf2` artifacts into the **fixed** folder `~/Downloads/hillside46-firmware/`,
+   wiping it first so the previous build is overwritten:
+   ```
+   DEST=~/Downloads/hillside46-firmware
+   rm -rf "$DEST" && mkdir -p "$DEST"
+   gh run download <run-id> --repo GlebYavorski/hillside46 --dir "$DEST"
+   ```
+   Result: `~/Downloads/hillside46-firmware/firmware/hillside46_{left,right}-nice_nano_v2-zmk.uf2`.
+
+Do **NOT** trigger a build for commits that touch only `CLAUDE.md`, README, or other
+non-firmware / auxiliary files.
+
+## Conventions
+
+- Documentation lives directly in code comments
+- Every layer must have an ASCII layout diagram in a comment
+- This `CLAUDE.md` is written and maintained in **English**
 
 ## Git
 
-- `origin` → форк пользователя: `https://github.com/alparo/hillside46.git`
-- `upstream` → оригинал: `https://github.com/mmccoyd/zmk-config.git`
-- Пушить только в `origin`
+- `origin` → user's fork: `https://github.com/GlebYavorski/hillside46.git`
+- `upstream` → original: `https://github.com/mmccoyd/zmk-config.git`
+- Push only to `origin`
 
 ## Documentation
 
-- we try to keep the comments in the `config/hillside46.keymap` updated
-- when adding keymap diagrams use following letters for modifiers:
+- we try to keep the comments in `config/hillside46.keymap` updated
+- when adding keymap diagrams use the following letters for modifiers:
   G - Win/Gui/Meta
   A - Alt
   S - Shift
   C - Control
 - always exactly in this order. So, for example:
-  - for alt+win+h the diagram should have GA-h
+  - for alt+win+h the diagram should be GA-h
   - for shift+ctrl+gui+alt+right it will be GASC-->
   - for alt+5: A-5
