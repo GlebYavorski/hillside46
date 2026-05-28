@@ -80,9 +80,9 @@ in Win order.
 
   | Layer keys (left)              | Hyper chord     | AeroSpace action                  |
   |--------------------------------|-----------------|-----------------------------------|
-  | Q W E / A S D / Z X C          | ⌃⌥⌘+7..9/4..6/1..3 | `workspace 7..9 / 4..6 / 1..3` |
+  | W E R / S D F / X C V          | ⌃⌥⌘+7..9/4..6/1..3 | `workspace 7..9 / 4..6 / 1..3` (aligned with NUM layer digits) |
   | `AC-Tab` slot (col 1, mid row) | ⌃⌥⌘+Tab         | `workspace-back-and-forth`        |
-  | R / V                          | ⌃⌥⌘+] / ⌃⌥⌘+[   | `workspace next` / `workspace prev` |
+  | T / B                          | ⌃⌥⌘+] / ⌃⌥⌘+[   | `workspace next` / `workspace prev` |
 
   | Layer keys (right)             | Hyper chord     | AeroSpace action                  |
   |--------------------------------|-----------------|-----------------------------------|
