@@ -72,20 +72,27 @@ in Win order.
 - **Cmd+Tab** (DEF_MAC, on the AC-Tab key) switches between apps (tap = the two most
   recent apps). To switch between WINDOWS (like alt-tab on Windows) install the AltTab
   app; windows of a single app — Cmd+` (backtick).
-- **Spaces switching** (HK_MAC, right hand): `H`=`Ctrl+←`, `L`=`Ctrl+→` — built into
-  macOS, no setup required.
-- **Window tiling** (HK_MAC, left hand): native macOS Sequoia/Tahoe tiling, but the
-  defaults rely on the Globe key (which ZMK can't send). So the layer sends Hyper
-  (`Ctrl+Opt+Cmd`+letter) chords that must be bound once to menu items in
-  **System Settings → Keyboard → Keyboard Shortcuts → App Shortcuts → All Applications**
-  (`+`, type the menu item name exactly, press the chord):
+- **Window management** (HK_MAC): driven by [AeroSpace](https://nikitabobko.github.io/AeroSpace/),
+  install it (`brew install --cask nikitabobko-tap/aerospace`) and place the project's
+  `~/.aerospace.toml`. AeroSpace bindings live on **Hyper = `Ctrl+Opt+Cmd`** (not the
+  default `Alt`, which collides with zellij's `Alt+hjkl/-/=/f/i/n/o/p` and several
+  Cmd+Opt+* macOS shortcuts). HK_MAC sends Hyper-chords matching the config:
 
-  | Layer key | Chord         | Menu item (Window → Move & Resize)  |
-  |-----------|---------------|-------------------------------------|
-  | Q / W / E | ⌃⌥⌘+Q / W / E | Top Left / Top / Top Right          |
-  | A / S / D | ⌃⌥⌘+A / S / D | Left / Fill / Right                 |
-  | Z / X / C | ⌃⌥⌘+Z / X / C | Bottom Left / Bottom / Bottom Right |
-  | F / R     | ⌃⌥⌘+F / R     | Center / Return to Previous Size    |
+  | Layer keys (left)              | Hyper chord     | AeroSpace action                  |
+  |--------------------------------|-----------------|-----------------------------------|
+  | Q W E / A S D / Z X C          | ⌃⌥⌘+7..9/4..6/1..3 | `workspace 7..9 / 4..6 / 1..3` |
+  | `AC-Tab` slot (col 1, mid row) | ⌃⌥⌘+Tab         | `workspace-back-and-forth`        |
+  | R / V                          | ⌃⌥⌘+] / ⌃⌥⌘+[   | `workspace next` / `workspace prev` |
+
+  | Layer keys (right)             | Hyper chord     | AeroSpace action                  |
+  |--------------------------------|-----------------|-----------------------------------|
+  | H J K L (home row)             | ⌃⌥⌘+H/J/K/L     | `focus left / down / up / right`  |
+  | Y U I O (row above home)       | ⌃⌥⌘+⇧+H/J/K/L   | `move left / down / up / right`   |
+  | M / `,`                        | ⌃⌥⌘+- / ⌃⌥⌘+=  | `resize smart -50 / +50`          |
+
+  AeroSpace has `start-at-login = false` in the shipped config — launch it manually
+  (Spotlight → "AeroSpace") or flip the flag if you want auto-start. Without AeroSpace
+  running, the Hyper-chords above are no-ops.
 
 ## Build
 
