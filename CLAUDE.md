@@ -14,14 +14,15 @@ ZMK firmware keymap for the Hillside46 split keyboard (nice!nano v2 controller).
 
 ## Layers
 
-Order matters: the bases (DEF, DEF_MAC) are the lowest so that momentary/overlay
+Order matters: the bases (DEF_MAC, DEF) are the lowest so that momentary/overlay
 layers stack on top of either of them; ADJ is the highest so it overrides NAV_MAC
-when reached via NUM+NAV_MAC.
+when reached via NUM+NAV_MAC. DEF_MAC is layer 0 — the keyboard boots into mac mode
+by default; Win/Lin requires an ADJ switch.
 
 | # | Name    | Description                              |
 |---|---------|------------------------------------------|
-| 0 | DEF     | QWERTY base (Win/Lin), homerow mods      |
-| 1 | DEF_MAC | QWERTY base for macOS                    |
+| 0 | DEF_MAC | QWERTY base for macOS (boot default)     |
+| 1 | DEF     | QWERTY base (Win/Lin), homerow mods      |
 | 2 | NUM     | Numbers, symbols, F-keys (shared)        |
 | 3 | NAV     | Navigation, symbols, media (Win/Lin)     |
 | 4 | HK      | Hotkeys (Alt+N combos, window management)|
@@ -36,12 +37,17 @@ ADJ is activated via a conditional_layer when NUM and NAV are held simultaneousl
 ## Target OSes (Win/Lin ↔ macOS)
 
 The config keeps two parallel bases:
-- **Win/Lin** (default on boot): layers DEF / NAV / HK / FZ
-- **macOS**: layers DEF_MAC / NAV_MAC / HK_MAC
+- **macOS** (default on boot, BT profile 0): layers DEF_MAC / NAV_MAC / HK_MAC
+- **Win/Lin** (BT profile 1): layers DEF / NAV / HK / FZ
 
 Switching is done with keys in the ADJ layer (top row of the left half, above BT_SEL 0/1):
-- above BT_SEL 0 → `&to DEF` (Win/Lin base)
-- above BT_SEL 1 → `&to DEF_MAC` (mac base)
+- above BT_SEL 0 → `&to DEF_MAC` (mac base)
+- above BT_SEL 1 → `&to DEF` (Win/Lin base)
+
+The BT slot ↔ layer pairing is convention: ZMK's BT_SEL just selects a stored
+pairing profile, so the physical Bluetooth slot 0 should be paired with the mac
+device (and slot 1 with the Win/Lin device) for the on-boot default to be useful.
+If your current pairings are reversed, see "Re-pair BT slots" below.
 
 Modifier convention on mac: `LGUI`=Cmd, `LALT`=Option, `LCTRL`=Ctrl.
 
@@ -56,8 +62,9 @@ on the same fingers in both OSes. The shared NUM layer was left as-is — its HR
 in Win order.
 
 ### Known limitations of mac mode
-- On boot/battery swap the keyboard always starts on the Win base (layer 0) — ZMK
-  does not persist the choice. You must press the switch in ADJ.
+- On boot/battery swap the keyboard always starts on layer 0 (DEF_MAC, mac base) —
+  ZMK does not persist a different choice. To use Win/Lin you must press the switch
+  in ADJ each time the keyboard powers on.
 - Combos are gated by the topmost active layer (`combo_active_on_layer` in ZMK), so on
   the mac base only mac combos fire and on the win base only win combos fire — no conflict.
 - Clipboard: Win/Lin — Ctrl (cut/copy/paste), mac — Cmd (LG(X)/LG(C)/LG(V)).
@@ -93,6 +100,21 @@ in Win order.
   AeroSpace has `start-at-login = false` in the shipped config — launch it manually
   (Spotlight → "AeroSpace") or flip the flag if you want auto-start. Without AeroSpace
   running, the Hyper-chords above are no-ops.
+
+### Re-pair BT slots (mac → BT 0, Win → BT 1)
+
+The keymap convention is that BT slot 0 holds the mac pairing and slot 1 holds the
+Win/Lin pairing. The keymap change itself does NOT move existing pairings — slots
+are stored in the keyboard's flash. If your slots are reversed:
+
+1. From ADJ, select BT slot 0 (`&bt BT_SEL 0`), then `&bt BT_CLR` to clear it.
+2. From the currently paired host's OS, "forget" the keyboard in Bluetooth settings.
+3. Repeat steps 1–2 for slot 1.
+4. Re-pair: BT_SEL 0, then pair to the mac; BT_SEL 1, then pair to Win/Lin.
+
+`&bt BT_SEL N` is on the second row of ADJ (left half) and `&bt BT_CLR` is below the
+INS column on the same layer. After re-pairing, the boot default (mac on BT 0) works
+without intervention.
 
 ## Build
 

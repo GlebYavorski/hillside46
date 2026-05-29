@@ -11,10 +11,11 @@
 #include <dt-bindings/zmk/outputs.h>
 
 // layer shortcuts, must match order in which they are defined below
-// bases (DEF, DEF_MAC) are lowest so momentary/overlay layers stack above them;
+// bases (DEF_MAC, DEF) are lowest so momentary/overlay layers stack above them;
 // ADJ is highest so it shows above NAV_MAC when reached via NUM+NAV_MAC.
-#define DEF 0
-#define DEF_MAC 1
+// DEF_MAC is layer 0 so the keyboard boots into mac mode by default.
+#define DEF_MAC 0
+#define DEF 1
 #define NUM 2
 #define NAV 3
 #define HK 4
@@ -145,24 +146,8 @@
         keymap {
                 compatible = "zmk,keymap";
 
-                default_layer {
-/* QWERTY - HRM on ASDF/JKL; | AC-Tab=Alt+Ctrl+Tab | [/]=tap:[, hold:] | thumb: hold=layer, tap=key
- * -------------------------------------------------------------------------------------------------------------------------------------
- * |  `    |   Q   |   W   |   E   |   R   |   T   |-----------------------------------|   Y   |   U   |   I   |   O   |   P   |  [/]  |
- * |AC-Tab |   A   |   S   |   D   |   F   |   G   |-----------------------------------|   H   |   J   |   K   |   L   |   ;   |   '   |
- * |   -   |   Z   |   X   |   C   |   V   |   B   |  ESC  |-------------------|  INS  |   N   |   M   |   ,   |   .   |   /   |   \   |
- *                                 |HK/BSPC|FZ/TAB |NUM/SPC|HK/ENT |HK/ENT |NAV/CW |FZ/BSPC| A/DEL |
- */
-                        bindings = <
-&kp GRAVE      &kp Q &kp W &kp E &kp R &kp T &kp Y                                                    &kp U   &kp I  &kp O   &kp P    &mt RBKT LBKT
-&kp LA(LC(TAB)) &hrm LGUI A &hrm LALT S &hrm LSHIFT D &hrm LCTRL F  &kp G                             &kp H  &hrm RCTRL J &hrm RSHIFT K &hrm LALT L &hrm RGUI SEMI &kp SQT
-&kp MINUS      &kp Z &kp X &kp C &kp V &kp B   &kp ESC                                   &kp INSERT  &kp N  &kp M  &kp COMMA    &kp DOT &kp FSLH &kp BSLH
-                                &lt HK BSPC &lt FZ TAB &lt NUM SPACE &lt HK RETURN     &lt HK RETURN &cw_ht NAV 0 &lt FZ BSPC &mt LALT DEL
-                        >;
-                };
-
                 def_mac_layer {
-/* QWERTY macOS - copy of DEF | G-Tab=Cmd+Tab (switch to last app; tap toggles 2 most recent) | thumbs: FZ->plain TAB/BSPC, HK->HK_MAC, NAV->NAV_MAC
+/* QWERTY macOS (boot default, layer 0) | G-Tab=Cmd+Tab (switch to last app; tap toggles 2 most recent) | thumbs: HK->HK_MAC, NAV->NAV_MAC, no FZ
  * HRM mac (Cmd<->Ctrl swapped vs Win): A=Ctrl S=Opt D=Shift F=Cmd  /  J=Cmd K=Shift L=Opt ;=Ctrl  (Cmd on index, Ctrl on pinky)
  * -------------------------------------------------------------------------------------------------------------------------------------
  * |  `    |   Q   |   W   |   E   |   R   |   T   |-----------------------------------|   Y   |   U   |   I   |   O   |   P   |  [/]  |
@@ -175,6 +160,22 @@
 &kp LG(TAB)    &hrm LCTRL A &hrm LALT S &hrm LSHIFT D &hrm LGUI F  &kp G                              &kp H  &hrm RGUI J &hrm RSHIFT K &hrm LALT L &hrm RCTRL SEMI &kp SQT
 &kp MINUS      &kp Z &kp X &kp C &kp V &kp B   &kp ESC                                   &kp INSERT  &kp N  &kp M  &kp COMMA    &kp DOT &kp FSLH &kp BSLH
                                 &lt HK_MAC BSPC &kp TAB &lt NUM SPACE &lt HK_MAC RETURN     &lt HK_MAC RETURN &cw_ht NAV_MAC 0 &kp BSPC &mt LALT DEL
+                        >;
+                };
+
+                default_layer {
+/* QWERTY Win/Lin (layer 1, must be reached via ADJ) - HRM on ASDF/JKL; | AC-Tab=Alt+Ctrl+Tab | [/]=tap:[, hold:] | thumb: hold=layer, tap=key
+ * -------------------------------------------------------------------------------------------------------------------------------------
+ * |  `    |   Q   |   W   |   E   |   R   |   T   |-----------------------------------|   Y   |   U   |   I   |   O   |   P   |  [/]  |
+ * |AC-Tab |   A   |   S   |   D   |   F   |   G   |-----------------------------------|   H   |   J   |   K   |   L   |   ;   |   '   |
+ * |   -   |   Z   |   X   |   C   |   V   |   B   |  ESC  |-------------------|  INS  |   N   |   M   |   ,   |   .   |   /   |   \   |
+ *                                 |HK/BSPC|FZ/TAB |NUM/SPC|HK/ENT |HK/ENT |NAV/CW |FZ/BSPC| A/DEL |
+ */
+                        bindings = <
+&kp GRAVE      &kp Q &kp W &kp E &kp R &kp T &kp Y                                                    &kp U   &kp I  &kp O   &kp P    &mt RBKT LBKT
+&kp LA(LC(TAB)) &hrm LGUI A &hrm LALT S &hrm LSHIFT D &hrm LCTRL F  &kp G                             &kp H  &hrm RCTRL J &hrm RSHIFT K &hrm LALT L &hrm RGUI SEMI &kp SQT
+&kp MINUS      &kp Z &kp X &kp C &kp V &kp B   &kp ESC                                   &kp INSERT  &kp N  &kp M  &kp COMMA    &kp DOT &kp FSLH &kp BSLH
+                                &lt HK BSPC &lt FZ TAB &lt NUM SPACE &lt HK RETURN     &lt HK RETURN &cw_ht NAV 0 &lt FZ BSPC &mt LALT DEL
                         >;
                 };
 
@@ -278,15 +279,16 @@ XXX                  XXX  &kp LC(LA(LG(N1)))  &kp LC(LA(LG(N2)))  &kp LC(LA(LG(N
                 };
 
                 adj_layer {
-/* ADJUST - active when NUM+NAV held simultaneously | WIN/MAC switch OS base layer
+/* ADJUST - active when NUM+NAV held simultaneously | MAC/WIN switch OS base layer
+ * Column 2 (MAC / BT 0) is the boot default — mac base lives on the first BT slot.
  * -------------------------------------------------------------------------------------------------------------------------------------
- * |       |  WIN  |  MAC  |       |       |       |-----------------------------------|       |  F11  |  F12  |PrtScr |EP_OFF | EP_ON |
+ * |       |  MAC  |  WIN  |       |       |       |-----------------------------------|       |  F11  |  F12  |PrtScr |EP_OFF | EP_ON |
  * | RESET | BT 0  | BT 1  | BT 2  | BT 3  | BT 4  |-----------------------------------|       |       |       |  INS  |       | RESET |
  * |       | LGUI  | LALT  | LCTRL | LSHIFT|       |BT CLR |-------------------|       |       |       |OUT_USB|OUT_BLE|       | BOOTL |
  *                                 |       |       |       |       |---|       |       |       |       |
  */
                         bindings = <
-&none         &to DEF &to DEF_MAC &none &none         &none                                                                               &none       &kp   F11       &kp   F12        &kp PRINTSCREEN   &ext_power EP_OFF  &ext_power EP_ON
+&none         &to DEF_MAC &to DEF &none &none         &none                                                                               &none       &kp   F11       &kp   F12        &kp PRINTSCREEN   &ext_power EP_OFF  &ext_power EP_ON
 &sys_reset    &bt  BT_SEL 0 &bt  BT_SEL 1 &bt  BT_SEL 2 &bt  BT_SEL 3 &bt  BT_SEL 4                                                       &none       &none           &none            &kp INS           &none           &sys_reset
 &none         &kp  LGUI     &kp  LALT     &kp  LCTRL    &kp LSHIFT    &none         &bt BT_CLR                             &none      &none       &none           &out  OUT_USB    &out  OUT_BLE  &none           &bootloader
                                                         &trans        &trans        &trans        &trans         &trans    &trans     &trans      &trans 
