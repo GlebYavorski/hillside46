@@ -150,19 +150,19 @@
                 def_mac_layer {
 /* QWERTY macOS (boot default, layer 0) | G-Tab=Cmd+Tab (switch to last app; tap toggles 2 most recent)
  * thumbs left: HK_MAC (mac hotkeys / screenshots, leftmost) · TAB · NUM · WM_MAC (window mgmt)
- * thumbs right: WM_MAC · NAV_MAC · BSPC · A/DEL
+ * thumbs right: WM_MAC · NAV_MAC · LA/BSPC · RA/DEL
  * HRM mac (Cmd<->Ctrl swapped vs Win): A=Ctrl S=Opt D=Shift F=Cmd  /  J=Cmd K=Shift L=Opt ;=Ctrl  (Cmd on index, Ctrl on pinky)
  * -------------------------------------------------------------------------------------------------------------------------------------
  * |  `    |   Q   |   W   |   E   |   R   |   T   |-----------------------------------|   Y   |   U   |   I   |   O   |   P   |  [/]  |
  * | G-Tab |   A   |   S   |   D   |   F   |   G   |-----------------------------------|   H   |   J   |   K   |   L   |   ;   |   '   |
  * |   -   |   Z   |   X   |   C   |   V   |   B   |  ESC  |-------------------|  INS  |   N   |   M   |   ,   |   .   |   /   |   \   |
- *                                 |HK/BSPC|  TAB  |NUM/SPC|WM/ENT |WM/ENT |NAV/CW | BSPC  | A/DEL |
+ *                                 |HK/BSPC|  TAB  |NUM/SPC|WM/ENT |WM/ENT |NAV/CW |LA/BSPC|RA/DEL |
  */
                         bindings = <
 &kp GRAVE      &kp Q &kp W &kp E &kp R &kp T &kp Y                                                    &kp U   &kp I  &kp O   &kp P    &mt RBKT LBKT
 &kp LG(TAB)    &hrm LCTRL A &hrm LALT S &hrm LSHIFT D &hrm LGUI F  &kp G                              &kp H  &hrm RGUI J &hrm RSHIFT K &hrm LALT L &hrm RCTRL SEMI &kp SQT
 &kp MINUS      &kp Z &kp X &kp C &kp V &kp B   &kp ESC                                   &kp INSERT  &kp N  &kp M  &kp COMMA    &kp DOT &kp FSLH &kp BSLH
-                                &lt HK_MAC BSPC &kp TAB &lt NUM SPACE &lt WM_MAC RETURN     &lt WM_MAC RETURN &cw_ht NAV_MAC 0 &kp BSPC &mt LALT DEL
+                                &lt HK_MAC BSPC &kp TAB &lt NUM SPACE &lt WM_MAC RETURN     &lt WM_MAC RETURN &cw_ht NAV_MAC 0 &mt LALT BSPC &mt RALT DEL
                         >;
                 };
 
@@ -265,17 +265,17 @@ XXX         &kp KP_N1   &kp KP_N2 &kp KP_N3 &kp KP_N4 &kp KP_N5  ___            
 
                 wm_mac_layer {
 /* WM_MAC (macOS window management) - AeroSpace control via Hyper (GAC = Ctrl+Opt+Cmd) chords
- * left: workspaces 1-9 numpad aligned with NUM layer's digits | H-Tab back-and-forth (over Cmd+Tab) | T/G/B = H-] next / H-[ prev / H-0 workspace 0
+ * left: workspaces 1-9 numpad aligned with NUM layer's digits | H-Tab back-and-forth (over Cmd+Tab) | T/G/B = H-[ prev / H-] next / H-0 workspace 0
  * right: focus on home row (H-HJKL) | move above home row (Y/U/I/O = HS-HJKL) | resize M/, = H-- / H-= | layout: N = tiles (H-/), . = accordion (H-,)
  * -------------------------------------------------------------------------------------------------------------------------------------
- * |       |       |  H-7  |  H-8  |  H-9  |  H-]  |-----------------------------------| HS-H  | HS-J  | HS-K  | HS-L  |       |       |
- * | H-Tab |       |  H-4  |  H-5  |  H-6  |  H-[  |-----------------------------------|  H-H  |  H-J  |  H-K  |  H-L  |       |       |
+ * |       |       |  H-7  |  H-8  |  H-9  |  H-[  |-----------------------------------| HS-H  | HS-J  | HS-K  | HS-L  |       |       |
+ * | H-Tab |       |  H-4  |  H-5  |  H-6  |  H-]  |-----------------------------------|  H-H  |  H-J  |  H-K  |  H-L  |       |       |
  * |       |       |  H-1  |  H-2  |  H-3  |  H-0  |       |-------------------|       |  H-/  |  H--  |  H-=  |  H-,  |       |       |
  *                                 |       |       |       |       |---|       |       |       |       |
  */
                         bindings = <
-XXX                  XXX  &kp LC(LA(LG(N7)))  &kp LC(LA(LG(N8)))  &kp LC(LA(LG(N9)))  &kp LC(LA(LG(RBKT)))                                            &kp LC(LA(LG(LS(H))))  &kp LC(LA(LG(LS(J))))  &kp LC(LA(LG(LS(K))))  &kp LC(LA(LG(LS(L))))  XXX XXX
-&kp LC(LA(LG(TAB)))  XXX  &kp LC(LA(LG(N4)))  &kp LC(LA(LG(N5)))  &kp LC(LA(LG(N6)))  &kp LC(LA(LG(LBKT)))                                                              &kp LC(LA(LG(H)))      &kp LC(LA(LG(J)))      &kp LC(LA(LG(K)))      &kp LC(LA(LG(L)))      XXX XXX
+XXX                  XXX  &kp LC(LA(LG(N7)))  &kp LC(LA(LG(N8)))  &kp LC(LA(LG(N9)))  &kp LC(LA(LG(LBKT)))                                            &kp LC(LA(LG(LS(H))))  &kp LC(LA(LG(LS(J))))  &kp LC(LA(LG(LS(K))))  &kp LC(LA(LG(LS(L))))  XXX XXX
+&kp LC(LA(LG(TAB)))  XXX  &kp LC(LA(LG(N4)))  &kp LC(LA(LG(N5)))  &kp LC(LA(LG(N6)))  &kp LC(LA(LG(RBKT)))                                                              &kp LC(LA(LG(H)))      &kp LC(LA(LG(J)))      &kp LC(LA(LG(K)))      &kp LC(LA(LG(L)))      XXX XXX
 XXX                  XXX  &kp LC(LA(LG(N1)))  &kp LC(LA(LG(N2)))  &kp LC(LA(LG(N3)))  &kp LC(LA(LG(N0)))  ___                                  ___  &kp LC(LA(LG(FSLH)))   &kp LC(LA(LG(MINUS)))  &kp LC(LA(LG(EQUAL)))  &kp LC(LA(LG(COMMA)))  XXX XXX
                                                                                                   ___ ___ ___ ___                          ___ ___ ___ ___
                         >;

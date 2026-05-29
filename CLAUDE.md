@@ -90,7 +90,7 @@ in Win order.
   |--------------------------------|-----------------|-----------------------------------|
   | W E R / S D F / X C V          | ⌃⌥⌘+7..9/4..6/1..3 | `workspace 7..9 / 4..6 / 1..3` (aligned with NUM layer digits) |
   | `AC-Tab` slot (col 1, mid row) | ⌃⌥⌘+Tab         | `workspace-back-and-forth`        |
-  | T / B                          | ⌃⌥⌘+] / ⌃⌥⌘+[   | `workspace next` / `workspace prev` |
+  | T / G                          | ⌃⌥⌘+[ / ⌃⌥⌘+]   | `workspace prev` / `workspace next` (G is lower → next, easier to reach) |
 
   | Layer keys (right)             | Hyper chord     | AeroSpace action                  |
   |--------------------------------|-----------------|-----------------------------------|
@@ -136,11 +136,20 @@ does **NOT** start a build. Trigger it with:
 You can build from any branch (not only `main`), but it must be pushed to `origin`
 first. Artifacts (.uf2) are downloaded from the finished run (Actions → run → Artifacts).
 
-### After a firmware-affecting commit (automation rule)
+### Commit cadence and build trigger (rule)
 
-Whenever a commit changes **firmware files** — anything under `config/`
-(`hillside46.keymap`, `combos.dtsi`, `hillside46.conf`, `west.yml`) or the build
-matrix (`build.yaml`) — automatically follow up with:
+**Commits:** each logical change can land as its own commit — feel free to commit
+incrementally rather than batching unrelated edits. Always show the diff first and
+wait for the user's "ok" before creating the commit.
+
+**Builds: NEVER trigger automatically.** Even when a commit changes **firmware files**
+(anything under `config/` — `hillside46.keymap`, `combos.dtsi`, `hillside46.conf`,
+`west.yml` — or the build matrix `build.yaml`), do **NOT** push and run the workflow
+on your own. Instead, after the commit, ask the user explicitly: *"готов билдить?"*
+(or equivalent). The user often stacks several logical commits before flashing, so
+they decide when to spend a build.
+
+When the user confirms they're ready to build:
 
 1. Push the branch to `origin` (never `upstream`).
 2. Trigger the build:
@@ -156,8 +165,8 @@ matrix (`build.yaml`) — automatically follow up with:
    ```
    Result: `~/Downloads/hillside46-firmware/firmware/hillside46_{left,right}-nice_nano_v2-zmk.uf2`.
 
-Do **NOT** trigger a build for commits that touch only `CLAUDE.md`, README, or other
-non-firmware / auxiliary files.
+Commits that touch only `CLAUDE.md`, README, or other non-firmware / auxiliary
+files never need a build at all — don't even ask.
 
 ## Conventions
 
