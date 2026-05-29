@@ -18,11 +18,12 @@
 #define DEF 1
 #define NUM 2
 #define NAV 3
-#define HK 4
+#define WM 4
 #define FZ 5
 #define NAV_MAC 6
-#define HK_MAC 7
-#define ADJ 8
+#define WM_MAC 7
+#define HK_MAC 8
+#define ADJ 9
 
 #define Undo   LC(Z)
 #define Redo   LC(Y)
@@ -54,12 +55,12 @@
             compatible = "zmk,conditional-layers";
             tri_layer {
                 if-layers = <2 3>;
-                then-layer = <8>;
+                then-layer = <9>;
             };
             // mac: NUM + NAV_MAC also reaches ADJ
             tri_layer_mac {
                 if-layers = <2 6>;
-                then-layer = <8>;
+                then-layer = <9>;
             };
         };
         behaviors {
@@ -147,39 +148,41 @@
                 compatible = "zmk,keymap";
 
                 def_mac_layer {
-/* QWERTY macOS (boot default, layer 0) | G-Tab=Cmd+Tab (switch to last app; tap toggles 2 most recent) | thumbs: HK->HK_MAC, NAV->NAV_MAC, no FZ
+/* QWERTY macOS (boot default, layer 0) | G-Tab=Cmd+Tab (switch to last app; tap toggles 2 most recent)
+ * thumbs left: HK_MAC (mac hotkeys / screenshots, leftmost) · TAB · NUM · WM_MAC (window mgmt)
+ * thumbs right: WM_MAC · NAV_MAC · BSPC · A/DEL
  * HRM mac (Cmd<->Ctrl swapped vs Win): A=Ctrl S=Opt D=Shift F=Cmd  /  J=Cmd K=Shift L=Opt ;=Ctrl  (Cmd on index, Ctrl on pinky)
  * -------------------------------------------------------------------------------------------------------------------------------------
  * |  `    |   Q   |   W   |   E   |   R   |   T   |-----------------------------------|   Y   |   U   |   I   |   O   |   P   |  [/]  |
  * | G-Tab |   A   |   S   |   D   |   F   |   G   |-----------------------------------|   H   |   J   |   K   |   L   |   ;   |   '   |
  * |   -   |   Z   |   X   |   C   |   V   |   B   |  ESC  |-------------------|  INS  |   N   |   M   |   ,   |   .   |   /   |   \   |
- *                                 |HK/BSPC|  TAB  |NUM/SPC|HK/ENT |HK/ENT |NAV/CW | BSPC  | A/DEL |
+ *                                 |HK/BSPC|  TAB  |NUM/SPC|WM/ENT |WM/ENT |NAV/CW | BSPC  | A/DEL |
  */
                         bindings = <
 &kp GRAVE      &kp Q &kp W &kp E &kp R &kp T &kp Y                                                    &kp U   &kp I  &kp O   &kp P    &mt RBKT LBKT
 &kp LG(TAB)    &hrm LCTRL A &hrm LALT S &hrm LSHIFT D &hrm LGUI F  &kp G                              &kp H  &hrm RGUI J &hrm RSHIFT K &hrm LALT L &hrm RCTRL SEMI &kp SQT
 &kp MINUS      &kp Z &kp X &kp C &kp V &kp B   &kp ESC                                   &kp INSERT  &kp N  &kp M  &kp COMMA    &kp DOT &kp FSLH &kp BSLH
-                                &lt HK_MAC BSPC &kp TAB &lt NUM SPACE &lt HK_MAC RETURN     &lt HK_MAC RETURN &cw_ht NAV_MAC 0 &kp BSPC &mt LALT DEL
+                                &lt HK_MAC BSPC &kp TAB &lt NUM SPACE &lt WM_MAC RETURN     &lt WM_MAC RETURN &cw_ht NAV_MAC 0 &kp BSPC &mt LALT DEL
                         >;
                 };
 
-                default_layer {
+                def_layer {
 /* QWERTY Win/Lin (layer 1, must be reached via ADJ) - HRM on ASDF/JKL; | AC-Tab=Alt+Ctrl+Tab | [/]=tap:[, hold:] | thumb: hold=layer, tap=key
  * -------------------------------------------------------------------------------------------------------------------------------------
  * |  `    |   Q   |   W   |   E   |   R   |   T   |-----------------------------------|   Y   |   U   |   I   |   O   |   P   |  [/]  |
  * |AC-Tab |   A   |   S   |   D   |   F   |   G   |-----------------------------------|   H   |   J   |   K   |   L   |   ;   |   '   |
  * |   -   |   Z   |   X   |   C   |   V   |   B   |  ESC  |-------------------|  INS  |   N   |   M   |   ,   |   .   |   /   |   \   |
- *                                 |HK/BSPC|FZ/TAB |NUM/SPC|HK/ENT |HK/ENT |NAV/CW |FZ/BSPC| A/DEL |
+ *                                 |WM/BSPC|FZ/TAB |NUM/SPC|WM/ENT |WM/ENT |NAV/CW |FZ/BSPC| A/DEL |
  */
                         bindings = <
 &kp GRAVE      &kp Q &kp W &kp E &kp R &kp T &kp Y                                                    &kp U   &kp I  &kp O   &kp P    &mt RBKT LBKT
 &kp LA(LC(TAB)) &hrm LGUI A &hrm LALT S &hrm LSHIFT D &hrm LCTRL F  &kp G                             &kp H  &hrm RCTRL J &hrm RSHIFT K &hrm LALT L &hrm RGUI SEMI &kp SQT
 &kp MINUS      &kp Z &kp X &kp C &kp V &kp B   &kp ESC                                   &kp INSERT  &kp N  &kp M  &kp COMMA    &kp DOT &kp FSLH &kp BSLH
-                                &lt HK BSPC &lt FZ TAB &lt NUM SPACE &lt HK RETURN     &lt HK RETURN &cw_ht NAV 0 &lt FZ BSPC &mt LALT DEL
+                                &lt WM BSPC &lt FZ TAB &lt NUM SPACE &lt WM RETURN     &lt WM RETURN &cw_ht NAV 0 &lt FZ BSPC &mt LALT DEL
                         >;
                 };
 
-                numbers_layer {
+                num_layer {
 /* NUM - left: numpad 789/456/123 | right: symbols ^&*() and F6-F11 | -/ and +* are tap-dance
  * -------------------------------------------------------------------------------------------------------------------------------------
  * |       |   =   |   7   |   8   |   9   |  - /  |-----------------------------------|  F6   |  F7   |  F8   |  F9   |  F10  |  F11  |
@@ -211,8 +214,8 @@ XXX         &kp KP_N1   &kp KP_N2 &kp KP_N3 &kp KP_N4 &kp KP_N5  ___            
                         >;
                 };
 
-                hotkeys_layer {
-/* HOTKEYS - G=Win+1..9 numpad left | GC=Win+Ctrl | GA=Win+Alt | GS=Win+Shift on HJKL right
+                wm_layer {
+/* WM (Win/Lin window management) - G=Win+1..9 numpad left | GC=Win+Ctrl | GA=Win+Alt | GS=Win+Shift on HJKL right
  * -------------------------------------------------------------------------------------------------------------------------------------
  * |       |       |  C-7  |  C-8  |  C-9  | GC-<- |-----------------------------------| GC-H  | GC-J  | GC-K  | GC-L  |       |       |
  * |       |       |  C-4  |  C-5  |  C-6  | GC->  |-----------------------------------| GA-H  | GA-J  | GA-K  | GA-L  |       |       |
@@ -227,8 +230,8 @@ XXX     XXX &kp LC(F1) &kp LC(F2) &kp LC(F3) &kp LG(N0) ___                     
                         >;
                 };
 
-                fancyzones_layer {
-/* FANCYZONES - G=Win snap, GAC=Win+Alt+Ctrl FancyZones layouts, GC=Win+Ctrl desktops, SC=Shift+Ctrl
+                fz_layer {
+/* FZ (FancyZones) - G=Win snap, GAC=Win+Alt+Ctrl FancyZones layouts, GC=Win+Ctrl desktops, SC=Shift+Ctrl
  * -------------------------------------------------------------------------------------------------------------------------------------
  * | GAC-3 | G-UP  |GAC-<- | G-PgU | GAC-> | GC-<- |-----------------------------------|       |       |       |       |       |       |
  * | GAC-2 | A-Tab |  G-1  |  G-2  |  G-3  | GC->  |-----------------------------------| G-<-  | G-DN  | G-UP  |  G->  |       |       |
@@ -260,8 +263,8 @@ XXX         &kp KP_N1   &kp KP_N2 &kp KP_N3 &kp KP_N4 &kp KP_N5  ___            
                         >;
                 };
 
-                hk_mac_layer {
-/* HOTKEYS macOS - AeroSpace control via Hyper (GAC = Ctrl+Opt+Cmd) chords
+                wm_mac_layer {
+/* WM_MAC (macOS window management) - AeroSpace control via Hyper (GAC = Ctrl+Opt+Cmd) chords
  * left: workspaces 1-9 numpad aligned with NUM layer's digits | H-Tab back-and-forth (over Cmd+Tab) | T/G/B = H-] next / H-[ prev / H-0 workspace 0
  * right: focus on home row (H-HJKL) | move above home row (Y/U/I/O = HS-HJKL) | resize M/, = H-- / H-= | layout: N = tiles (H-/), . = accordion (H-,)
  * -------------------------------------------------------------------------------------------------------------------------------------
@@ -275,6 +278,25 @@ XXX                  XXX  &kp LC(LA(LG(N7)))  &kp LC(LA(LG(N8)))  &kp LC(LA(LG(N
 &kp LC(LA(LG(TAB)))  XXX  &kp LC(LA(LG(N4)))  &kp LC(LA(LG(N5)))  &kp LC(LA(LG(N6)))  &kp LC(LA(LG(LBKT)))                                                              &kp LC(LA(LG(H)))      &kp LC(LA(LG(J)))      &kp LC(LA(LG(K)))      &kp LC(LA(LG(L)))      XXX XXX
 XXX                  XXX  &kp LC(LA(LG(N1)))  &kp LC(LA(LG(N2)))  &kp LC(LA(LG(N3)))  &kp LC(LA(LG(N0)))  ___                                  ___  &kp LC(LA(LG(FSLH)))   &kp LC(LA(LG(MINUS)))  &kp LC(LA(LG(EQUAL)))  &kp LC(LA(LG(COMMA)))  XXX XXX
                                                                                                   ___ ___ ___ ___                          ___ ___ ___ ___
+                        >;
+                };
+
+                hk_mac_layer {
+/* HK_MAC (macOS hotkeys) - activated by holding the leftmost-left thumb on DEF_MAC (BSPC slot)
+ * Screenshots placed over NUM digits 4 and 5 (positions 14/15 = home row S/D):
+ *   GS-4 = Cmd+Shift+4 (region screenshot)
+ *   GS-5 = Cmd+Shift+5 (screenshot UI)
+ * -------------------------------------------------------------------------------------------------------------------------------------
+ * |       |       |       |       |       |       |-----------------------------------|       |       |       |       |       |       |
+ * |       |       | GS-4  | GS-5  |       |       |-----------------------------------|       |       |       |       |       |       |
+ * |       |       |       |       |       |       |       |-------------------|       |       |       |       |       |       |       |
+ *                                 |       |       |       |       |---|       |       |       |       |
+ */
+                        bindings = <
+___  ___  ___                 ___                 ___  ___                                            ___  ___  ___  ___  ___  ___
+___  ___  &kp LG(LS(N4))      &kp LG(LS(N5))      ___  ___                                            ___  ___  ___  ___  ___  ___
+___  ___  ___                 ___                 ___  ___  ___                                  ___  ___  ___  ___  ___  ___  ___
+                                                                ___ ___ ___ ___              ___ ___ ___ ___
                         >;
                 };
 

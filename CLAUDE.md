@@ -19,26 +19,27 @@ layers stack on top of either of them; ADJ is the highest so it overrides NAV_MA
 when reached via NUM+NAV_MAC. DEF_MAC is layer 0 — the keyboard boots into mac mode
 by default; Win/Lin requires an ADJ switch.
 
-| # | Name    | Description                              |
-|---|---------|------------------------------------------|
-| 0 | DEF_MAC | QWERTY base for macOS (boot default)     |
-| 1 | DEF     | QWERTY base (Win/Lin), homerow mods      |
-| 2 | NUM     | Numbers, symbols, F-keys (shared)        |
-| 3 | NAV     | Navigation, symbols, media (Win/Lin)     |
-| 4 | HK      | Hotkeys (Alt+N combos, window management)|
-| 5 | FZ      | FancyZones, window management (Win)      |
-| 6 | NAV_MAC | Navigation for macOS                     |
-| 7 | HK_MAC  | Window tiling + Spaces (macOS)           |
-| 8 | ADJ     | Bluetooth, system, OS switching          |
+| # | Name    | Description                                       |
+|---|---------|---------------------------------------------------|
+| 0 | DEF_MAC | QWERTY base for macOS (boot default)              |
+| 1 | DEF     | QWERTY base (Win/Lin), homerow mods               |
+| 2 | NUM     | Numbers, symbols, F-keys (shared)                 |
+| 3 | NAV     | Navigation, symbols, media (Win/Lin)              |
+| 4 | WM      | Window management (Win/Lin: Win+1..9, Win+arrows) |
+| 5 | FZ      | FancyZones, snap, virtual desktops (Win)          |
+| 6 | NAV_MAC | Navigation for macOS                              |
+| 7 | WM_MAC  | Window management (macOS via AeroSpace)           |
+| 8 | HK_MAC  | macOS hotkeys (screenshots; leftmost-left thumb)  |
+| 9 | ADJ     | Bluetooth, system, OS switching                   |
 
 ADJ is activated via a conditional_layer when NUM and NAV are held simultaneously
-(works with both NAV and NAV_MAC — two tri_layer entries: `<2 3>` and `<2 6>` → 8).
+(works with both NAV and NAV_MAC — two tri_layer entries: `<2 3>` and `<2 6>` → 9).
 
 ## Target OSes (Win/Lin ↔ macOS)
 
 The config keeps two parallel bases:
-- **macOS** (default on boot, BT profile 0): layers DEF_MAC / NAV_MAC / HK_MAC
-- **Win/Lin** (BT profile 1): layers DEF / NAV / HK / FZ
+- **macOS** (default on boot, BT profile 0): layers DEF_MAC / NAV_MAC / WM_MAC / HK_MAC
+- **Win/Lin** (BT profile 1): layers DEF / NAV / WM / FZ
 
 Switching is done with keys in the ADJ layer (top row of the left half, above BT_SEL 0/1):
 - above BT_SEL 0 → `&to DEF_MAC` (mac base)
@@ -79,11 +80,11 @@ in Win order.
 - **Cmd+Tab** (DEF_MAC, on the AC-Tab key) switches between apps (tap = the two most
   recent apps). To switch between WINDOWS (like alt-tab on Windows) install the AltTab
   app; windows of a single app — Cmd+` (backtick).
-- **Window management** (HK_MAC): driven by [AeroSpace](https://nikitabobko.github.io/AeroSpace/),
+- **Window management** (WM_MAC): driven by [AeroSpace](https://nikitabobko.github.io/AeroSpace/),
   install it (`brew install --cask nikitabobko-tap/aerospace`) and place the project's
   `~/.aerospace.toml`. AeroSpace bindings live on **Hyper = `Ctrl+Opt+Cmd`** (not the
   default `Alt`, which collides with zellij's `Alt+hjkl/-/=/f/i/n/o/p` and several
-  Cmd+Opt+* macOS shortcuts). HK_MAC sends Hyper-chords matching the config:
+  Cmd+Opt+* macOS shortcuts). WM_MAC sends Hyper-chords matching the config:
 
   | Layer keys (left)              | Hyper chord     | AeroSpace action                  |
   |--------------------------------|-----------------|-----------------------------------|
@@ -100,6 +101,14 @@ in Win order.
   AeroSpace has `start-at-login = false` in the shipped config — launch it manually
   (Spotlight → "AeroSpace") or flip the flag if you want auto-start. Without AeroSpace
   running, the Hyper-chords above are no-ops.
+
+- **HK_MAC (mac hotkeys, screenshots)** — held via the **leftmost-left thumb** on DEF_MAC
+  (the BSPC slot). Currently maps `Cmd+Shift+4` and `Cmd+Shift+5` over the NUM-layer
+  digits 4 and 5 (physical home-row `S` and `D`):
+  - `S` → `⌘⇧4` — region screenshot
+  - `D` → `⌘⇧5` — screenshot UI
+  Layout matches NUM: screenshot keys sit on the same physical positions as digits 4/5,
+  so you can think of the layer as "shift+cmd onto the corresponding NUM digit".
 
 ### Re-pair BT slots (mac → BT 0, Win → BT 1)
 
