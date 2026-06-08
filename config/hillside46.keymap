@@ -266,16 +266,16 @@ XXX         &kp KP_N1   &kp KP_N2 &kp KP_N3 &kp KP_N4 &kp KP_N5  ___            
                 wm_mac_layer {
 /* WM_MAC (macOS window management) - AeroSpace control via Hyper (GAC = Ctrl+Opt+Cmd) chords
  * left: workspaces 1-9 numpad aligned with NUM layer's digits | H-Tab back-and-forth (over Cmd+Tab) | T/G/B = H-[ prev / H-] next / H-0 workspace 0
- * right: focus on home row (H-HJKL) | move above home row (Y/U/I/O = HS-HJKL) | resize M/, = H-- / H-= | layout: N = tiles (H-/), . = accordion (H-,)
+ * right: focus on home row (H-HJKL) | move above home row (Y/U/I/O = HS-HJKL) | resize M/, = H-- / H-= | layout: N = tiles (H-/), . = accordion (H-,) | ; (pinky) = HS-; -> AeroSpace service mode
  * -------------------------------------------------------------------------------------------------------------------------------------
  * |       |       |  H-7  |  H-8  |  H-9  |  H-[  |-----------------------------------| HS-H  | HS-J  | HS-K  | HS-L  |       |       |
- * | H-Tab |       |  H-4  |  H-5  |  H-6  |  H-]  |-----------------------------------|  H-H  |  H-J  |  H-K  |  H-L  |       |       |
+ * | H-Tab |       |  H-4  |  H-5  |  H-6  |  H-]  |-----------------------------------|  H-H  |  H-J  |  H-K  |  H-L  | HS-;  |       |
  * |       |       |  H-1  |  H-2  |  H-3  |  H-0  |       |-------------------|       |  H-/  |  H--  |  H-=  |  H-,  |       |       |
  *                                 |       |       |       |       |---|       |       |       |       |
  */
                         bindings = <
 XXX                  XXX  &kp LC(LA(LG(N7)))  &kp LC(LA(LG(N8)))  &kp LC(LA(LG(N9)))  &kp LC(LA(LG(LBKT)))                                            &kp LC(LA(LG(LS(H))))  &kp LC(LA(LG(LS(J))))  &kp LC(LA(LG(LS(K))))  &kp LC(LA(LG(LS(L))))  XXX XXX
-&kp LC(LA(LG(TAB)))  XXX  &kp LC(LA(LG(N4)))  &kp LC(LA(LG(N5)))  &kp LC(LA(LG(N6)))  &kp LC(LA(LG(RBKT)))                                                              &kp LC(LA(LG(H)))      &kp LC(LA(LG(J)))      &kp LC(LA(LG(K)))      &kp LC(LA(LG(L)))      XXX XXX
+&kp LC(LA(LG(TAB)))  XXX  &kp LC(LA(LG(N4)))  &kp LC(LA(LG(N5)))  &kp LC(LA(LG(N6)))  &kp LC(LA(LG(RBKT)))                                                              &kp LC(LA(LG(H)))      &kp LC(LA(LG(J)))      &kp LC(LA(LG(K)))      &kp LC(LA(LG(L)))      &kp LC(LA(LG(LS(SEMI)))) XXX
 XXX                  XXX  &kp LC(LA(LG(N1)))  &kp LC(LA(LG(N2)))  &kp LC(LA(LG(N3)))  &kp LC(LA(LG(N0)))  ___                                  ___  &kp LC(LA(LG(FSLH)))   &kp LC(LA(LG(MINUS)))  &kp LC(LA(LG(EQUAL)))  &kp LC(LA(LG(COMMA)))  XXX XXX
                                                                                                   ___ ___ ___ ___                          ___ ___ ___ ___
                         >;
