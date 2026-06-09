@@ -31,6 +31,10 @@
 #define Copy   LC(INS)
 #define Paste  LS(INS)
 
+/* Hyper = Ctrl+Opt+Cmd (mac AeroSpace) / Ctrl+Alt+Win (FancyZones) - same three mods.
+ * Use HYPER(key) instead of spelling LC(LA(LG(key))) by hand. */
+#define HYPER(k) LC(LA(LG(k)))
+
 #define XXX &none
 #define ___ &trans
 
@@ -239,9 +243,9 @@ XXX     XXX &kp LC(F1) &kp LC(F2) &kp LC(F3) &kp LG(N0) ___                     
  *                                 |       |       |       |       |---|       |       |       |       |
  */
                         bindings = <
-&kp LG(LA(LC(N3)))      &win_up       &kp LG(LA(LC(LEFT)))     &kp LG(PG_UP)   &kp LG(LA(LC(RIGHT)))   &kp LG(LC(LEFT))                                        XXX XXX XXX XXX XXX XXX
-&kp LG(LA(LC(N2)))      &kp LA(TAB)   &kp LG(N1)               &kp LG(N2)      &kp LG(N3)              &kp LG(LC(RIGHT))                                       &win_left &win_down  &win_up &win_right XXX XXX
-&kp LG(LA(LC(N1)))      &win_down     &win_left                &kp LG(PG_DN)   &win_right        &kp LC(LS(GRAVE)) ___                           ___    XXX &kp LG(PG_DN) &kp LG(PG_UP) XXX XXX XXX
+&kp HYPER(N3)           &win_up       &kp HYPER(LEFT)          &kp LG(PG_UP)   &kp HYPER(RIGHT)        &kp LG(LC(LEFT))                                        XXX XXX XXX XXX XXX XXX
+&kp HYPER(N2)           &kp LA(TAB)   &kp LG(N1)               &kp LG(N2)      &kp LG(N3)              &kp LG(LC(RIGHT))                                       &win_left &win_down  &win_up &win_right XXX XXX
+&kp HYPER(N1)           &win_down     &win_left                &kp LG(PG_DN)   &win_right        &kp LC(LS(GRAVE)) ___                           ___    XXX &kp LG(PG_DN) &kp LG(PG_UP) XXX XXX XXX
                                                                                                                         ___ ___ ___ ___                   ___ ___ ___ ___
                         >;
                 };
@@ -274,9 +278,9 @@ XXX         &kp KP_N1   &kp KP_N2 &kp KP_N3 &kp KP_N4 &kp KP_N5  ___            
  *                                 |       |       |       |       |---|       |       |       |       |
  */
                         bindings = <
-XXX                  XXX  &kp LC(LA(LG(N7)))  &kp LC(LA(LG(N8)))  &kp LC(LA(LG(N9)))  &kp LC(LA(LG(LBKT)))                                            &kp LC(LA(LG(LS(H))))  &kp LC(LA(LG(LS(J))))  &kp LC(LA(LG(LS(K))))  &kp LC(LA(LG(LS(L))))  XXX XXX
-&kp LC(LA(LG(TAB)))  XXX  &kp LC(LA(LG(N4)))  &kp LC(LA(LG(N5)))  &kp LC(LA(LG(N6)))  &kp LC(LA(LG(RBKT)))                                                              &kp LC(LA(LG(H)))      &kp LC(LA(LG(J)))      &kp LC(LA(LG(K)))      &kp LC(LA(LG(L)))      &kp LC(LA(LG(LS(SEMI)))) XXX
-XXX                  XXX  &kp LC(LA(LG(N1)))  &kp LC(LA(LG(N2)))  &kp LC(LA(LG(N3)))  &kp LC(LA(LG(N0)))  ___                                  ___  &kp LC(LA(LG(FSLH)))   &kp LC(LA(LG(MINUS)))  &kp LC(LA(LG(EQUAL)))  &kp LC(LA(LG(COMMA)))  XXX XXX
+XXX                  XXX  &kp HYPER(N7)  &kp HYPER(N8)  &kp HYPER(N9)  &kp HYPER(LBKT)                                  &kp HYPER(LS(H))  &kp HYPER(LS(J))  &kp HYPER(LS(K))  &kp HYPER(LS(L))  XXX XXX
+&kp HYPER(TAB)       XXX  &kp HYPER(N4)  &kp HYPER(N5)  &kp HYPER(N6)  &kp HYPER(RBKT)                                  &kp HYPER(H)      &kp HYPER(J)      &kp HYPER(K)      &kp HYPER(L)      &kp HYPER(LS(SEMI)) XXX
+XXX                  XXX  &kp HYPER(N1)  &kp HYPER(N2)  &kp HYPER(N3)  &kp HYPER(N0)  ___                          ___  &kp HYPER(FSLH)   &kp HYPER(MINUS)  &kp HYPER(EQUAL)  &kp HYPER(COMMA)  XXX XXX
                                                                                                   ___ ___ ___ ___                          ___ ___ ___ ___
                         >;
                 };
