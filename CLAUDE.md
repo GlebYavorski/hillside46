@@ -30,15 +30,16 @@ by default; Win/Lin requires an ADJ switch.
 | 6 | NAV_MAC | Navigation for macOS                              |
 | 7 | WM_MAC  | Window management (macOS via AeroSpace)           |
 | 8 | HK_MAC  | macOS hotkeys (screenshots; leftmost-left thumb)  |
-| 9 | ADJ     | Bluetooth, system, OS switching                   |
+| 9 | ZJ      | Zellij tabs/panes (mac; Tab & Backspace thumbs)   |
+| 10| ADJ     | Bluetooth, system, OS switching                   |
 
 ADJ is activated via a conditional_layer when NUM and NAV are held simultaneously
-(works with both NAV and NAV_MAC — two tri_layer entries: `<2 3>` and `<2 6>` → 9).
+(works with both NAV and NAV_MAC — two tri_layer entries: `<2 3>` and `<2 6>` → 10).
 
 ## Target OSes (Win/Lin ↔ macOS)
 
 The config keeps two parallel bases:
-- **macOS** (default on boot, BT profile 0): layers DEF_MAC / NAV_MAC / WM_MAC / HK_MAC
+- **macOS** (default on boot, BT profile 0): layers DEF_MAC / NAV_MAC / WM_MAC / HK_MAC / ZJ
 - **Win/Lin** (BT profile 1): layers DEF / NAV / WM / FZ
 
 Switching is done with keys in the ADJ layer (top row of the left half, above BT_SEL 0/1):
@@ -102,6 +103,21 @@ in Win order.
   AeroSpace has `start-at-login = false` in the shipped config — launch it manually
   (Spotlight → "AeroSpace") or flip the flag if you want auto-start. Without AeroSpace
   running, the Hyper-chords above are no-ops.
+
+- **ZJ (zellij layer)** — held via the **left TAB thumb** or the **right BSPC thumb** on
+  DEF_MAC (symmetric; the right thumb's former LALT hold was replaced — the layer covers
+  the zellij Alt-chords it was used for). The zellij config (`~/.config/zellij/config.kdl`)
+  is **not** modified: the layer drives existing binds. Layout mirrors WM_MAC:
+  - Direct Alt-chords (zellij normal mode): `A-hjkl` focus, `A--`/`A-=` resize,
+    `A-f` floating, `A-]` next swap layout.
+  - Mode sequences via two-param ZMK macros: `zj_seq(M,K)` = hold Ctrl, tap M, release,
+    tap K — for binds that auto-return to normal mode (`C-t,1..9` go-to-tab, `C-t,n` new
+    tab, `C-p,f` fullscreen). `zj_seq_esc` appends Esc — for binds that stay in the mode
+    (`C-t,h`/`C-t,l` prev/next tab, `C-t,Tab` toggle last tab, `C-h,hjkl` move pane).
+  - Left half: tabs 1-9 on the NUM-aligned numpad, T/G = prev/next tab, B = new tab,
+    G-Tab slot = toggle last tab. Right half: focus on home row, move pane on Y/U/I/O,
+    resize on M/`,`, floating/layout on N/`.`, fullscreen on `;`.
+  Requires Ghostty's `macos-option-as-alt` so Option reaches zellij as Alt.
 
 - **HK_MAC (mac hotkeys, screenshots)** — held via the **leftmost-left thumb** on DEF_MAC
   (the BSPC slot). Currently maps `Cmd+Shift+4` and `Cmd+Shift+5` over the NUM-layer

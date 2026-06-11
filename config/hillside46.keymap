@@ -23,7 +23,8 @@
 #define NAV_MAC 6
 #define WM_MAC 7
 #define HK_MAC 8
-#define ADJ 9
+#define ZJ 9
+#define ADJ 10
 
 #define Undo   LC(Z)
 #define Redo   LC(Y)
@@ -59,12 +60,12 @@
             compatible = "zmk,conditional-layers";
             tri_layer {
                 if-layers = <2 3>;
-                then-layer = <9>;
+                then-layer = <10>;
             };
             // mac: NUM + NAV_MAC also reaches ADJ
             tri_layer_mac {
                 if-layers = <2 6>;
-                then-layer = <9>;
+                then-layer = <10>;
             };
         };
         behaviors {
@@ -145,6 +146,27 @@
                         #binding-cells = <0>;
                         bindings = <&macro_press &kp LGUI>, <&macro_tap &kp DOWN>, <&macro_release &kp LGUI>;
                 };
+                /* zellij mode sequence: hold Ctrl, tap M (mode key), release Ctrl, tap K (action).
+                 * For zellij binds that auto-return to normal mode (GoToTab N, NewTab, fullscreen). */
+                zj_seq: zj_seq_macro {
+                        compatible = "zmk,behavior-macro-two-param";
+                        #binding-cells = <2>;
+                        bindings = <&macro_press &kp LCTRL>,
+                                   <&macro_param_1to1>, <&macro_tap &kp MACRO_PLACEHOLDER>,
+                                   <&macro_release &kp LCTRL>,
+                                   <&macro_param_2to1>, <&macro_tap &kp MACRO_PLACEHOLDER>;
+                };
+                /* Same, plus trailing Esc — for zellij binds that stay in the mode
+                 * (tab prev/next/toggle, move pane). */
+                zj_seq_esc: zj_seq_esc_macro {
+                        compatible = "zmk,behavior-macro-two-param";
+                        #binding-cells = <2>;
+                        bindings = <&macro_press &kp LCTRL>,
+                                   <&macro_param_1to1>, <&macro_tap &kp MACRO_PLACEHOLDER>,
+                                   <&macro_release &kp LCTRL>,
+                                   <&macro_param_2to1>, <&macro_tap &kp MACRO_PLACEHOLDER>,
+                                   <&macro_tap &kp ESC>;
+                };
         };
 
 
@@ -153,20 +175,20 @@
 
                 def_mac_layer {
 /* QWERTY macOS (boot default, layer 0) | G-Tab=Cmd+Tab (switch to last app; tap toggles 2 most recent)
- * thumbs left: HK_MAC (mac hotkeys / screenshots, leftmost) · TAB · NUM · WM_MAC (window mgmt)
- * thumbs right: WM_MAC · NAV_MAC · LA/BSPC · DEL
+ * thumbs left: HK_MAC (mac hotkeys / screenshots, leftmost) · ZJ/TAB (zellij) · NUM · WM_MAC (window mgmt)
+ * thumbs right: WM_MAC · NAV_MAC · ZJ/BSPC (zellij) · DEL
  * HRM mac (Cmd<->Ctrl swapped vs Win): A=Ctrl S=Opt D=Shift F=Cmd  /  J=Cmd K=Shift L=Opt ;=Ctrl  (Cmd on index, Ctrl on pinky)
  * -------------------------------------------------------------------------------------------------------------------------------------
  * |  `    |   Q   |   W   |   E   |   R   |   T   |-----------------------------------|   Y   |   U   |   I   |   O   |   P   |  [/]  |
  * | G-Tab |   A   |   S   |   D   |   F   |   G   |-----------------------------------|   H   |   J   |   K   |   L   |   ;   |   '   |
  * |   -   |   Z   |   X   |   C   |   V   |   B   |  ESC  |-------------------|RA/INS |   N   |   M   |   ,   |   .   |   /   |   \   |
- *                                 |HK/BSPC|  TAB  |NUM/SPC|WM/ENT |WM/ENT |NAV/CW |LA/BSPC|  DEL  |
+ *                                 |HK/BSPC|ZJ/TAB |NUM/SPC|WM/ENT |WM/ENT |NAV/CW |ZJ/BSPC|  DEL  |
  */
                         bindings = <
 &kp GRAVE      &kp Q &kp W &kp E &kp R &kp T &kp Y                                                    &kp U   &kp I  &kp O   &kp P    &mt RBKT LBKT
 &kp LG(TAB)    &hrm LCTRL A &hrm LALT S &hrm LSHIFT D &hrm LGUI F  &kp G                              &kp H  &hrm RGUI J &hrm RSHIFT K &hrm LALT L &hrm RCTRL SEMI &kp SQT
 &kp MINUS      &kp Z &kp X &kp C &kp V &kp B   &kp ESC                               &mt RALT INSERT  &kp N  &kp M  &kp COMMA    &kp DOT &kp FSLH &kp BSLH
-                                &lt HK_MAC BSPC &kp TAB &lt NUM SPACE &lt WM_MAC RETURN     &lt WM_MAC RETURN &cw_ht NAV_MAC 0 &mt LALT BSPC &kp DEL
+                                &lt HK_MAC BSPC &lt ZJ TAB &lt NUM SPACE &lt WM_MAC RETURN     &lt WM_MAC RETURN &cw_ht NAV_MAC 0 &lt ZJ BSPC &kp DEL
                         >;
                 };
 
@@ -302,6 +324,30 @@ ___  ___  ___                 ___                 ___  ___                      
 ___  ___  &kp LG(LS(N4))      &kp LG(LS(N5))      ___  ___                                            ___  ___  ___  ___  ___  ___
 ___  ___  ___                 ___                 ___  ___  ___                                  ___  ___  ___  ___  ___  ___  ___
                                                                 ___ ___ ___ ___              ___ ___ ___ ___
+                        >;
+                };
+
+                zj_layer {
+/* ZJ (zellij) - hold ZJ/TAB (left thumb) or ZJ/BSPC (right thumb) on DEF_MAC; mirrors WM_MAC.
+ * Zellij config untouched: layer drives existing binds — direct Alt-chords from normal mode
+ * (A-hjkl focus, A--/A-= resize, A-f floating, A-] next layout) plus mode sequences via
+ * zj_seq(M,K) = Ctrl+M, K (binds that auto-return to normal) and zj_seq_esc (binds that stay
+ * in mode: tab prev/next/toggle, move pane — trailing Esc exits).
+ * left: tabs 1-9 numpad aligned with NUM digits | lastT (G-Tab slot) = C-t,Tab toggle last tab |
+ *       T/G = prev/next tab (C-t,h / C-t,l) | B = new tab (C-t,n)
+ * right: focus home row A-hjkl | move pane Y/U/I/O = C-h,hjkl | resize M/, = A--/A-= |
+ *        N = floating A-f, . = next layout A-] | ; (pinky) = fullscreen C-p,f
+ * -------------------------------------------------------------------------------------------------------------------------------------
+ * |       |       | tab 7 | tab 8 | tab 9 | prevT |-----------------------------------| MOV-h | MOV-j | MOV-k | MOV-l |       |       |
+ * | lastT |       | tab 4 | tab 5 | tab 6 | nextT |-----------------------------------|  A-h  |  A-j  |  A-k  |  A-l  | fulls |       |
+ * |       |       | tab 1 | tab 2 | tab 3 | newT  |       |-------------------|       |  A-f  |  A--  |  A-=  |  A-]  |       |       |
+ *                                 |       |       |       |       |---|       |       |       |       |
+ */
+                        bindings = <
+XXX                XXX  &zj_seq T N7  &zj_seq T N8  &zj_seq T N9  &zj_seq_esc T H                                  &zj_seq_esc H H  &zj_seq_esc H J  &zj_seq_esc H K  &zj_seq_esc H L  XXX          XXX
+&zj_seq_esc T TAB  XXX  &zj_seq T N4  &zj_seq T N5  &zj_seq T N6  &zj_seq_esc T L                                  &kp LA(H)        &kp LA(J)        &kp LA(K)        &kp LA(L)        &zj_seq P F  XXX
+XXX                XXX  &zj_seq T N1  &zj_seq T N2  &zj_seq T N3  &zj_seq T N  ___                            ___  &kp LA(F)        &kp LA(MINUS)    &kp LA(EQUAL)    &kp LA(RBKT)     XXX          XXX
+                                                                                       ___ ___ ___ ___                          ___ ___ ___ ___
                         >;
                 };
 
