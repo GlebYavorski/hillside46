@@ -22,7 +22,7 @@
 #define FZ 5
 #define NAV_MAC 6
 #define WM_MAC 7
-#define HK_MAC 8
+#define APP 8
 #define ZJ 9
 #define ADJ 10
 
@@ -175,20 +175,20 @@
 
                 def_mac_layer {
 /* QWERTY macOS (boot default, layer 0) | G-Tab=Cmd+Tab (switch to last app; tap toggles 2 most recent)
- * thumbs left: HK_MAC (mac hotkeys / screenshots, leftmost) · ZJ/TAB (zellij) · NUM · WM_MAC (window mgmt)
+ * thumbs left: ZJ/BSPC (zellij, leftmost) · APP/TAB (app tabs+splits) · NUM · WM_MAC (window mgmt)
  * thumbs right: WM_MAC · NAV_MAC · ZJ/BSPC (zellij) · DEL
  * HRM mac (Cmd<->Ctrl swapped vs Win): A=Ctrl S=Opt D=Shift F=Cmd  /  J=Cmd K=Shift L=Opt ;=Ctrl  (Cmd on index, Ctrl on pinky)
  * -------------------------------------------------------------------------------------------------------------------------------------
  * |  `    |   Q   |   W   |   E   |   R   |   T   |-----------------------------------|   Y   |   U   |   I   |   O   |   P   |  [/]  |
  * | G-Tab |   A   |   S   |   D   |   F   |   G   |-----------------------------------|   H   |   J   |   K   |   L   |   ;   |   '   |
  * |   -   |   Z   |   X   |   C   |   V   |   B   |  ESC  |-------------------|RA/INS |   N   |   M   |   ,   |   .   |   /   |   \   |
- *                                 |HK/BSPC|ZJ/TAB |NUM/SPC|WM/ENT |WM/ENT |NAV/CW |ZJ/BSPC|  DEL  |
+ *                                 |ZJ/BSPC|APP/TAB|NUM/SPC|WM/ENT |WM/ENT |NAV/CW |ZJ/BSPC|  DEL  |
  */
                         bindings = <
 &kp GRAVE      &kp Q &kp W &kp E &kp R &kp T &kp Y                                                    &kp U   &kp I  &kp O   &kp P    &mt RBKT LBKT
 &kp LG(TAB)    &hrm LCTRL A &hrm LALT S &hrm LSHIFT D &hrm LGUI F  &kp G                              &kp H  &hrm RGUI J &hrm RSHIFT K &hrm LALT L &hrm RCTRL SEMI &kp SQT
 &kp MINUS      &kp Z &kp X &kp C &kp V &kp B   &kp ESC                               &mt RALT INSERT  &kp N  &kp M  &kp COMMA    &kp DOT &kp FSLH &kp BSLH
-                                &lt HK_MAC BSPC &lt ZJ TAB &lt NUM SPACE &lt WM_MAC RETURN     &lt WM_MAC RETURN &cw_ht NAV_MAC 0 &lt ZJ BSPC &kp DEL
+                                &lt ZJ BSPC &lt APP TAB &lt NUM SPACE &lt WM_MAC RETURN     &lt WM_MAC RETURN &cw_ht NAV_MAC 0 &lt ZJ BSPC &kp DEL
                         >;
                 };
 
@@ -308,22 +308,27 @@ XXX                  XXX  &kp HYPER(N1)  &kp HYPER(N2)  &kp HYPER(N3)  &kp HYPER
                         >;
                 };
 
-                hk_mac_layer {
-/* HK_MAC (macOS hotkeys) - activated by holding the leftmost-left thumb on DEF_MAC (BSPC slot)
- * Screenshots placed over NUM digits 4 and 5 (positions 14/15 = home row S/D):
- *   GS-4 = Cmd+Shift+4 (region screenshot)
- *   GS-5 = Cmd+Shift+5 (screenshot UI)
+                app_layer {
+/* APP (app-level tabs + splits) - hold APP/TAB (2nd-from-edge left thumb) on DEF_MAC; mirrors WM_MAC/ZJ.
+ * No app config edits except Obsidian (4 focus binds). Chords chosen to hit all 5 target apps:
+ *   tabs: Cmd+1..9 go-to (FF/Linear/Obsidian/kitty), C-S-Tab/C-Tab prev/next (all 5), Cmd+T/Cmd+W new/close.
+ *   splits (kitty always; Obsidian focus after binds): GA-hjkl focus, GAS-hjkl move,
+ *     GA--/GA-= resize, G-D/GS-D v/h-split — all match the user's kitty.conf (Cmd+Opt = GA).
+ * pinky col (Q/A/Z): GS-5 = Cmd+Shift+5 screenshot UI | GSC-4 = Cmd+Ctrl+Shift+4 region->clipboard (no file).
+ * left: tabs 1-9 numpad aligned with NUM digits | G-W close (G-Tab slot) | T/G = prev/next | B = new tab
+ * right: focus home row GA-hjkl | move Y/U/I/O = GAS-hjkl | resize M/, = GA--/GA-= | N/. = G-D/GS-D
+ * NOTE: GA-H (Cmd+Opt+H) is macOS "Hide Others" globally — only press APP hjkl while kitty/Obsidian is focused.
  * -------------------------------------------------------------------------------------------------------------------------------------
- * |       |       |       |       |       |       |-----------------------------------|       |       |       |       |       |       |
- * |       |       | GS-4  | GS-5  |       |       |-----------------------------------|       |       |       |       |       |       |
- * |       |       |       |       |       |       |       |-------------------|       |       |       |       |       |       |       |
+ * |       | GS-5  | G-7   | G-8   | G-9   | CS-Tab |----------------------------------| GAS-H | GAS-J | GAS-K | GAS-L |       |       |
+ * | G-W   | GSC-4 | G-4   | G-5   | G-6   | C-Tab  |----------------------------------|  GA-H |  GA-J |  GA-K |  GA-L |       |       |
+ * |       |       | G-1   | G-2   | G-3   | G-T    |       |-------------------|       |  G-D  |  GA-- |  GA-= |  GS-D |       |       |
  *                                 |       |       |       |       |---|       |       |       |       |
  */
                         bindings = <
-___  ___  ___                 ___                 ___  ___                                            ___  ___  ___  ___  ___  ___
-___  ___  &kp LG(LS(N4))      &kp LG(LS(N5))      ___  ___                                            ___  ___  ___  ___  ___  ___
-___  ___  ___                 ___                 ___  ___  ___                                  ___  ___  ___  ___  ___  ___  ___
-                                                                ___ ___ ___ ___              ___ ___ ___ ___
+XXX          &kp LG(LS(N5))       &kp LG(N7)  &kp LG(N8)  &kp LG(N9)  &kp LC(LS(TAB))                                  &kp LG(LA(LS(H)))  &kp LG(LA(LS(J)))  &kp LG(LA(LS(K)))  &kp LG(LA(LS(L)))  XXX  XXX
+&kp LG(W)    &kp LG(LC(LS(N4)))   &kp LG(N4)  &kp LG(N5)  &kp LG(N6)  &kp LC(TAB)                                      &kp LG(LA(H))      &kp LG(LA(J))      &kp LG(LA(K))      &kp LG(LA(L))      XXX  XXX
+XXX          XXX                  &kp LG(N1)  &kp LG(N2)  &kp LG(N3)  &kp LG(T)  ___                            ___    &kp LG(D)          &kp LG(LA(MINUS))  &kp LG(LA(EQUAL))  &kp LG(LS(D))      XXX  XXX
+                                                                                       ___ ___ ___ ___                          ___ ___ ___ ___
                         >;
                 };
 

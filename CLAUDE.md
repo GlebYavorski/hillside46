@@ -29,7 +29,7 @@ by default; Win/Lin requires an ADJ switch.
 | 5 | FZ      | FancyZones, snap, virtual desktops (Win)          |
 | 6 | NAV_MAC | Navigation for macOS                              |
 | 7 | WM_MAC  | Window management (macOS via AeroSpace)           |
-| 8 | HK_MAC  | macOS hotkeys (screenshots; leftmost-left thumb)  |
+| 8 | APP     | App tabs + splits (mac; 2nd-from-edge left thumb) |
 | 9 | ZJ      | Zellij tabs/panes (mac; Tab & Backspace thumbs)   |
 | 10| ADJ     | Bluetooth, system, OS switching                   |
 
@@ -39,7 +39,7 @@ ADJ is activated via a conditional_layer when NUM and NAV are held simultaneousl
 ## Target OSes (Win/Lin ↔ macOS)
 
 The config keeps two parallel bases:
-- **macOS** (default on boot, BT profile 0): layers DEF_MAC / NAV_MAC / WM_MAC / HK_MAC / ZJ
+- **macOS** (default on boot, BT profile 0): layers DEF_MAC / NAV_MAC / WM_MAC / APP / ZJ
 - **Win/Lin** (BT profile 1): layers DEF / NAV / WM / FZ
 
 Switching is done with keys in the ADJ layer (top row of the left half, above BT_SEL 0/1):
@@ -119,13 +119,25 @@ in Win order.
     resize on M/`,`, floating/layout on N/`.`, fullscreen on `;`.
   Requires Ghostty's `macos-option-as-alt` so Option reaches zellij as Alt.
 
-- **HK_MAC (mac hotkeys, screenshots)** — held via the **leftmost-left thumb** on DEF_MAC
-  (the BSPC slot). Currently maps `Cmd+Shift+4` and `Cmd+Shift+5` over the NUM-layer
-  digits 4 and 5 (physical home-row `S` and `D`):
-  - `S` → `⌘⇧4` — region screenshot
-  - `D` → `⌘⇧5` — screenshot UI
-  Layout matches NUM: screenshot keys sit on the same physical positions as digits 4/5,
-  so you can think of the layer as "shift+cmd onto the corresponding NUM digit".
+- **APP (app-level tabs + splits)** — held via the **2nd-from-edge left thumb** (TAB slot)
+  on DEF_MAC. ZJ moved to the outermost left thumb (BSPC slot). Gives one-handed, left-hand
+  control of tabs/splits across Firefox, kitty, Obsidian, Linear, DBGate using a single
+  chord per action; layout mirrors WM_MAC/ZJ. No app-config edits except Obsidian (below).
+  - Left half (tabs, works in all 5 apps): numpad `Cmd+1..9` = go-to tab (aligned with NUM
+    digits); T/G = prev/next tab (`Ctrl+Shift+Tab` / `Ctrl+Tab`); B = new tab (`Cmd+T`);
+    `G-Tab` slot = `Cmd+W` close tab.
+  - Pinky col (screenshots): `S` slot (Q) = `Cmd+Shift+5` (screenshot UI); `A` = `Cmd+Ctrl+Shift+4`
+    (region → clipboard, no file — the Ctrl modifier forces clipboard regardless of the macOS
+    "Save to" setting). (This replaces the old screenshot-only layer.)
+  - Right half (splits — kitty always; Obsidian focus after the binds below): home row
+    `Cmd+Opt+hjkl` = directional split focus; Y/U/I/O = `Cmd+Opt+Shift+hjkl` move (kitty);
+    M/`,` = `Cmd+Opt+-` / `Cmd+Opt+=` resize (kitty); N/`.` = `Cmd+D` / `Cmd+Shift+D`
+    v/h-split (kitty). These match the user's existing `kitty.conf` binds.
+  - **Caveat:** `Cmd+Opt+H` is macOS "Hide Others" globally; only press APP hjkl while
+    kitty or Obsidian is focused (they intercept the chord before the system sees it).
+  - **Obsidian setup (one-time):** Settings → Hotkeys → search "Focus on tab group" and
+    assign left/down/up/right to `Cmd+Opt+H/J/K/L`. Go-to-tab (`Cmd+1..8`), next/prev tab,
+    and `Cmd+T`/`Cmd+W` are already native. No other app needs configuration.
 
 ### Re-pair BT slots (mac → BT 0, Win → BT 1)
 
