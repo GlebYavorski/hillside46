@@ -30,7 +30,7 @@ by default; Win/Lin requires an ADJ switch.
 | 6 | NAV_MAC | Navigation for macOS                              |
 | 7 | WM_MAC  | Window management (macOS via AeroSpace)           |
 | 8 | APP     | App tabs + splits (mac; 2nd-from-edge left thumb) |
-| 9 | ZJ      | Zellij tabs/panes (mac; Tab & Backspace thumbs)   |
+| 9 | ZJ      | Zellij tabs/panes (mac; leftmost-left thumb)       |
 | 10| ADJ     | Bluetooth, system, OS switching                   |
 
 ADJ is activated via a conditional_layer when NUM and NAV are held simultaneously
@@ -104,9 +104,8 @@ in Win order.
   (Spotlight → "AeroSpace") or flip the flag if you want auto-start. Without AeroSpace
   running, the Hyper-chords above are no-ops.
 
-- **ZJ (zellij layer)** — held via the **left TAB thumb** or the **right BSPC thumb** on
-  DEF_MAC (symmetric; the right thumb's former LALT hold was replaced — the layer covers
-  the zellij Alt-chords it was used for). The zellij config (`~/.config/zellij/config.kdl`)
+- **ZJ (zellij layer)** — held via the **leftmost-left thumb** (BSPC slot) on DEF_MAC
+  (left-only now; its former right BSPC thumb became APP's mirror). The zellij config (`~/.config/zellij/config.kdl`)
   is **not** modified: the layer drives existing binds. Layout mirrors WM_MAC:
   - Direct Alt-chords (zellij normal mode): `A-hjkl` focus, `A--`/`A-=` resize,
     `A-f` floating, `A-]` next swap layout.
@@ -117,12 +116,14 @@ in Win order.
   - Left half: tabs 1-9 on the NUM-aligned numpad, T/G = prev/next tab, B = new tab,
     G-Tab slot = toggle last tab. Right half: focus on home row, move pane on Y/U/I/O,
     resize on M/`,`, floating/layout on N/`.`, fullscreen on `;`.
-  Requires Ghostty's `macos-option-as-alt` so Option reaches zellij as Alt.
+  Requires the terminal's option-as-alt (kitty: `macos_option_as_alt yes`) so Option reaches zellij as Alt.
 
 - **APP (app-level tabs + splits)** — held via the **2nd-from-edge left thumb** (TAB slot)
-  on DEF_MAC. ZJ moved to the outermost left thumb (BSPC slot). Gives one-handed, left-hand
-  control of tabs/splits across Firefox, kitty, Obsidian, Linear, DBGate using a single
-  chord per action; layout mirrors WM_MAC/ZJ. No app-config edits except Obsidian (below).
+  or, mirrored, the **right BSPC thumb** on DEF_MAC. Hold with the hand opposite the keys you
+  press: left thumb for the right-hand split keys, right thumb for the left-hand tab keys.
+  ZJ moved to the outermost left thumb (BSPC slot). Gives cross-hand control of tabs/splits
+  across Firefox, kitty, Obsidian, Linear, DBGate using a single chord per action; layout
+  mirrors WM_MAC/ZJ. No app-config edits except Obsidian (below).
   - Left half (tabs, works in all 5 apps): numpad `Cmd+1..9` = go-to tab (aligned with NUM
     digits); T/G = prev/next tab (`Ctrl+Shift+Tab` / `Ctrl+Tab`); B = new tab (`Cmd+T`);
     `G-Tab` slot = `Cmd+W` close tab.
