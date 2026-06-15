@@ -30,7 +30,7 @@ by default; Win/Lin requires an ADJ switch.
 | 6 | NAV_MAC | Navigation for macOS                              |
 | 7 | WM_MAC  | Window management (macOS via AeroSpace)           |
 | 8 | APP     | App tabs + splits (mac; 2nd-from-edge left thumb) |
-| 9 | ZJ      | Zellij tabs/panes (mac; leftmost-left thumb)       |
+| 9 | ZJ      | Zellij tabs/panes (mac; outermost thumbs)         |
 | 10| ADJ     | Bluetooth, system, OS switching                   |
 
 ADJ is activated via a conditional_layer when NUM and NAV are held simultaneously
@@ -104,8 +104,8 @@ in Win order.
   (Spotlight → "AeroSpace") or flip the flag if you want auto-start. Without AeroSpace
   running, the Hyper-chords above are no-ops.
 
-- **ZJ (zellij layer)** — held via the **leftmost-left thumb** (BSPC slot) on DEF_MAC
-  (left-only now; its former right BSPC thumb became APP's mirror). The zellij config (`~/.config/zellij/config.kdl`)
+- **ZJ (zellij layer)** — held via the **outermost thumbs** (left BSPC / right DEL slots)
+  on DEF_MAC (symmetric, mirroring APP/WM_MAC). The zellij config (`~/.config/zellij/config.kdl`)
   is **not** modified: the layer drives existing binds. Layout mirrors WM_MAC:
   - Direct Alt-chords (zellij normal mode): `A-hjkl` focus, `A--`/`A-=` resize,
     `A-f` floating, `A-]` next swap layout.
@@ -121,7 +121,7 @@ in Win order.
 - **APP (app-level tabs + splits)** — held via the **2nd-from-edge left thumb** (TAB slot)
   or, mirrored, the **right BSPC thumb** on DEF_MAC. Hold with the hand opposite the keys you
   press: left thumb for the right-hand split keys, right thumb for the left-hand tab keys.
-  ZJ moved to the outermost left thumb (BSPC slot). Gives cross-hand control of tabs/splits
+  ZJ sits on the outermost thumbs (left BSPC / right DEL). Gives cross-hand control of tabs/splits
   across Firefox, kitty, Obsidian, Linear, DBGate using a single chord per action; layout
   mirrors WM_MAC/ZJ. No app-config edits except Obsidian (below).
   - Left half (tabs, works in all 5 apps): numpad `Cmd+1..9` = go-to tab (aligned with NUM

@@ -176,19 +176,19 @@
                 def_mac_layer {
 /* QWERTY macOS (boot default, layer 0) | G-Tab=Cmd+Tab (switch to last app; tap toggles 2 most recent)
  * thumbs left: ZJ/BSPC (zellij, leftmost) · APP/TAB (app tabs+splits) · NUM · WM_MAC (window mgmt)
- * thumbs right: WM_MAC · NAV_MAC · APP/BSPC (app tabs+splits, mirror) · DEL
+ * thumbs right: WM_MAC · NAV_MAC · APP/BSPC (app, mirror) · ZJ/DEL (zellij, mirror)
  * HRM mac (Cmd<->Ctrl swapped vs Win): A=Ctrl S=Opt D=Shift F=Cmd  /  J=Cmd K=Shift L=Opt ;=Ctrl  (Cmd on index, Ctrl on pinky)
  * -------------------------------------------------------------------------------------------------------------------------------------
  * |  `    |   Q   |   W   |   E   |   R   |   T   |-----------------------------------|   Y   |   U   |   I   |   O   |   P   |  [/]  |
  * | G-Tab |   A   |   S   |   D   |   F   |   G   |-----------------------------------|   H   |   J   |   K   |   L   |   ;   |   '   |
  * |   -   |   Z   |   X   |   C   |   V   |   B   |  ESC  |-------------------|RA/INS |   N   |   M   |   ,   |   .   |   /   |   \   |
- *                                 |ZJ/BSPC|APP/TAB|NUM/SPC|WM/ENT |WM/ENT |NAV/CW |APP/BSP|  DEL  |
+ *                                 |ZJ/BSPC|APP/TAB|NUM/SPC|WM/ENT |WM/ENT |NAV/CW |APP/BSP|ZJ/DEL |
  */
                         bindings = <
 &kp GRAVE      &kp Q &kp W &kp E &kp R &kp T &kp Y                                                    &kp U   &kp I  &kp O   &kp P    &mt RBKT LBKT
 &kp LG(TAB)    &hrm LCTRL A &hrm LALT S &hrm LSHIFT D &hrm LGUI F  &kp G                              &kp H  &hrm RGUI J &hrm RSHIFT K &hrm LALT L &hrm RCTRL SEMI &kp SQT
 &kp MINUS      &kp Z &kp X &kp C &kp V &kp B   &kp ESC                               &mt RALT INSERT  &kp N  &kp M  &kp COMMA    &kp DOT &kp FSLH &kp BSLH
-                                &lt ZJ BSPC &lt APP TAB &lt NUM SPACE &lt WM_MAC RETURN     &lt WM_MAC RETURN &cw_ht NAV_MAC 0 &lt APP BSPC &kp DEL
+                                &lt ZJ BSPC &lt APP TAB &lt NUM SPACE &lt WM_MAC RETURN     &lt WM_MAC RETURN &cw_ht NAV_MAC 0 &lt APP BSPC &lt ZJ DEL
                         >;
                 };
 
@@ -333,7 +333,7 @@ XXX          XXX                  &kp LG(N1)  &kp LG(N2)  &kp LG(N3)  &kp LG(T) 
                 };
 
                 zj_layer {
-/* ZJ (zellij) - hold ZJ/BSPC (leftmost-left thumb) on DEF_MAC; mirrors WM_MAC.
+/* ZJ (zellij) - hold ZJ/BSPC (leftmost-left) or ZJ/DEL (rightmost-right) thumb on DEF_MAC; mirrors WM_MAC.
  * Zellij config untouched: layer drives existing binds — direct Alt-chords from normal mode
  * (A-hjkl focus, A--/A-= resize, A-f floating, A-] next layout) plus mode sequences via
  * zj_seq(M,K) = Ctrl+M, K (binds that auto-return to normal) and zj_seq_esc (binds that stay
