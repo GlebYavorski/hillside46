@@ -98,14 +98,36 @@
                         mods = <(MOD_LSFT|MOD_RSFT)>;
                         keep-mods = <MOD_RSFT>;
                 };
-                hrm: homerow_mods {
+                // Home-row mods, positional ("Miryoku/urob" style): split into a
+                // left- and right-hand variant so each only triggers its hold when
+                // the *next* key is on the OPPOSITE hand (hold-trigger-key-positions).
+                // hold-trigger-on-release lets same-hand mods chain when the next key
+                // is held. Same-hand mod+key (e.g. left-hand Cmd+C) still works via
+                // the timeout path: hold the mod alone past tapping-term, then press.
+                // Positions (Hillside46, 46 keys, numbered by keymap order from 0):
+                //   left  hand: 0-5, 12-17, 24-30   right hand: 6-11, 18-23, 31-37   thumbs: 38-45
+                hml: homerow_mod_left {
                         compatible = "zmk,behavior-hold-tap";
-                        label = "HOMEROW_MODS";
+                        label = "HRM_LEFT";
                         #binding-cells = <2>;
-                        flavor = "tap-preferred";
+                        flavor = "balanced";
                         tapping-term-ms = <200>;
                         quick-tap-ms = <QUICK_TAP_MS>;
                         global-quick-tap;
+                        hold-trigger-key-positions = <6 7 8 9 10 11 18 19 20 21 22 23 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45>;
+                        hold-trigger-on-release;
+                        bindings = <&kp>, <&kp>;
+                };
+                hmr: homerow_mod_right {
+                        compatible = "zmk,behavior-hold-tap";
+                        label = "HRM_RIGHT";
+                        #binding-cells = <2>;
+                        flavor = "balanced";
+                        tapping-term-ms = <200>;
+                        quick-tap-ms = <QUICK_TAP_MS>;
+                        global-quick-tap;
+                        hold-trigger-key-positions = <0 1 2 3 4 5 12 13 14 15 16 17 24 25 26 27 28 29 30 38 39 40 41 42 43 44 45>;
+                        hold-trigger-on-release;
                         bindings = <&kp>, <&kp>;
                 };
                 // tap: sticky-shift | shift + tap / double-tap: caps-word | hold: shift
@@ -186,7 +208,7 @@
  */
                         bindings = <
 &kp GRAVE      &kp Q &kp W &kp E &kp R &kp T &kp Y                                                    &kp U   &kp I  &kp O   &kp P    &mt RBKT LBKT
-&kp LG(TAB)    &hrm LCTRL A &hrm LALT S &hrm LSHIFT D &hrm LGUI F  &kp G                              &kp H  &hrm RGUI J &hrm RSHIFT K &hrm LALT L &hrm RCTRL SEMI &kp SQT
+&kp LG(TAB)    &hml LCTRL A &hml LALT S &hml LSHIFT D &hml LGUI F  &kp G                              &kp H  &hmr RGUI J &hmr RSHIFT K &hmr LALT L &hmr RCTRL SEMI &kp SQT
 &kp MINUS      &kp Z &kp X &kp C &kp V &kp B   &kp ESC                               &mt RALT INSERT  &kp N  &kp M  &kp COMMA    &kp DOT &kp FSLH &kp BSLH
                                 &lt ZJ BSPC &lt APP TAB &lt NUM SPACE &lt WM_MAC RETURN     &lt WM_MAC RETURN &cw_ht NAV_MAC 0 &lt APP BSPC &lt ZJ DEL
                         >;
@@ -202,7 +224,7 @@
  */
                         bindings = <
 &kp GRAVE      &kp Q &kp W &kp E &kp R &kp T &kp Y                                                    &kp U   &kp I  &kp O   &kp P    &mt RBKT LBKT
-&kp LA(LC(TAB)) &hrm LGUI A &hrm LALT S &hrm LSHIFT D &hrm LCTRL F  &kp G                             &kp H  &hrm RCTRL J &hrm RSHIFT K &hrm LALT L &hrm RGUI SEMI &kp SQT
+&kp LA(LC(TAB)) &hml LGUI A &hml LALT S &hml LSHIFT D &hml LCTRL F  &kp G                             &kp H  &hmr RCTRL J &hmr RSHIFT K &hmr LALT L &hmr RGUI SEMI &kp SQT
 &kp MINUS      &kp Z &kp X &kp C &kp V &kp B   &kp ESC                                   &kp INSERT  &kp N  &kp M  &kp COMMA    &kp DOT &kp FSLH &kp BSLH
                                 &lt WM BSPC &lt FZ TAB &lt NUM SPACE &lt WM RETURN     &lt WM RETURN &cw_ht NAV 0 &lt FZ BSPC &mt LALT DEL
                         >;
@@ -218,7 +240,7 @@
  */
                         bindings = <
 XXX             &kp EQUAL  &kp N7 &kp N8 &kp N9 &td1 &kp F6                 &kp F7   &kp F8   &kp F9   &kp F10  &kp F11
-&kp ENTER        &kp COLON  &kp N4 &kp N5 &kp N6 &td2                        &kp CARET   &hrm RCTRL AMPS &hrm RSHIFT STAR &hrm LALT LPAR &hrm RGUI RPAR &kp MINUS
+&kp ENTER        &kp COLON  &kp N4 &kp N5 &kp N6 &td2                        &kp CARET   &hmr RCTRL AMPS &hmr RSHIFT STAR &hmr LALT LPAR &hmr RGUI RPAR &kp MINUS
 &kp C_AL_CALC   &kp KP_DOT &kp N1 &kp N2 &kp N3 &kp N0 XXX              ___ ___    &kp KP_N7   &kp KP_N8   &kp KP_N9   &kp KP_N0   XXX
                                                 ___ ___ ___ ___     ___ ___ ___ &kp F12 
                         >;
@@ -234,7 +256,7 @@ XXX             &kp EQUAL  &kp N7 &kp N8 &kp N9 &td1 &kp F6                 &kp 
  */
                         bindings = <
 XXX            &kp F1      &kp F2 &kp F3   &kp F4      &kp F5                                   &kp HOME      &kp PG_DN        &kp PG_UP       &kp END       XXX             &kp C_VOL_UP
-&kp KP_EQUAL   &hrm LGUI EXCL  &hrm LALT AT &hrm LSHIFT HASH &hrm LCTRL DLLR  &kp PRCNT          &kp LEFT      &kp DOWN     &kp UP          &kp RIGHT       &kp RALT        &td0
+&kp KP_EQUAL   &hml LGUI EXCL  &hml LALT AT &hml LSHIFT HASH &hml LCTRL DLLR  &kp PRCNT          &kp LEFT      &kp DOWN     &kp UP          &kp RIGHT       &kp RALT        &td0
 XXX         &kp KP_N1   &kp KP_N2 &kp KP_N3 &kp KP_N4 &kp KP_N5  ___                        ___  &kp LC(LEFT)  &kp LC(PG_DN)    &kp LC(PG_UP)   &kp LC(RIGHT)   XXX             &kp C_VOL_DN
                                                         ___ ___ ___ ___                 ___ ___ ___ ___
                         >;
@@ -284,7 +306,7 @@ XXX     XXX &kp LC(F1) &kp LC(F2) &kp LC(F3) &kp LG(N0) ___                     
  */
                         bindings = <
 XXX            &kp F1      &kp F2 &kp F3   &kp F4      &kp F5                                   &kp LG(LEFT)  &kp PG_DN        &kp PG_UP       &kp LG(RIGHT) XXX             &kp C_VOL_UP
-&kp KP_EQUAL   &hrm LCTRL EXCL  &hrm LALT AT &hrm LSHIFT HASH &hrm LGUI DLLR  &kp PRCNT          &kp LEFT      &kp DOWN     &kp UP          &kp RIGHT       &kp RALT        &td0
+&kp KP_EQUAL   &hml LCTRL EXCL  &hml LALT AT &hml LSHIFT HASH &hml LGUI DLLR  &kp PRCNT          &kp LEFT      &kp DOWN     &kp UP          &kp RIGHT       &kp RALT        &td0
 XXX         &kp KP_N1   &kp KP_N2 &kp KP_N3 &kp KP_N4 &kp KP_N5  ___                        ___  &kp LA(LEFT)  &kp LG(LA(RIGHT)) &kp LG(LA(LEFT)) &kp LA(RIGHT) XXX             &kp C_VOL_DN
                                                         ___ ___ ___ ___                 ___ ___ ___ ___
                         >;
