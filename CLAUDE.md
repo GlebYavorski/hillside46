@@ -30,7 +30,7 @@ by default; Win/Lin requires an ADJ switch.
 | 6 | NAV_MAC | Navigation for macOS                              |
 | 7 | WM_MAC  | Window management (macOS via AeroSpace) — dormant, see below |
 | 8 | APP     | App tabs + splits (mac; 2nd-from-edge left thumb) |
-| 9 | ZJ      | Zellij tabs/panes (mac; outermost thumbs)         |
+| 9 | ZJ      | Zellij tabs/panes (mac) — dormant, see below       |
 | 10| ADJ     | Bluetooth, system, OS switching                   |
 
 ADJ is activated via a conditional_layer when NUM and NAV are held simultaneously
@@ -116,9 +116,11 @@ in Win order.
   | M / `,`                        | ⌃⌥⌘+- / ⌃⌥⌘+=  | `resize smart -50 / +50`          |
   | `;` (right pinky home row)     | ⌃⌥⌘⇧+;          | `mode service` (enter service binding mode) |
 
-- **ZJ (zellij layer)** — held via the **outermost thumbs** (left BSPC / right DEL slots)
-  on DEF_MAC (symmetric, mirroring APP/WM_MAC). The zellij config (`~/.config/zellij/config.kdl`)
-  is **not** modified: the layer drives existing binds. Layout mirrors WM_MAC:
+- **ZJ (zellij layer)** — dormant: the outermost thumbs on `def_mac_layer` that used to hold
+  this layer (left BSPC / right DEL slots) are now fully disabled (`&none`); no key activates
+  ZJ anymore. Kept for possible future rebinding. The zellij config (`~/.config/zellij/config.kdl`)
+  is **not** modified: the layer drives existing binds. Layout mirrors WM_MAC (accurate only
+  if this layer is wired to a key again):
   - Direct Alt-chords (zellij normal mode): `A-hjkl` focus, `A--`/`A-=` resize,
     `A-f` floating, `A-]` next swap layout.
   - Mode sequences via two-param ZMK macros: `zj_seq(M,K)` = hold Ctrl, tap M, release,
@@ -133,9 +135,9 @@ in Win order.
 - **APP (app-level tabs + splits)** — held via the **2nd-from-edge left thumb** (TAB slot)
   or, mirrored, the **right BSPC thumb** on DEF_MAC. Hold with the hand opposite the keys you
   press: left thumb for the right-hand split keys, right thumb for the left-hand tab keys.
-  ZJ sits on the outermost thumbs (left BSPC / right DEL). Gives cross-hand control of tabs/splits
-  across Firefox, kitty, Obsidian, Linear, DBGate using a single chord per action; layout
-  mirrors WM_MAC/ZJ. No app-config edits except Obsidian (below).
+  The outermost thumbs (left/right) are disabled — see ZJ above. Gives cross-hand control of
+  tabs/splits across Firefox, kitty, Obsidian, Linear, DBGate using a single chord per action;
+  layout mirrors WM_MAC/ZJ. No app-config edits except Obsidian (below).
   - Left half (tabs, works in all 5 apps): numpad `Cmd+1..9` = go-to tab (aligned with NUM
     digits); T/G = prev/next tab (`Ctrl+Shift+Tab` / `Ctrl+Tab`); B = new tab (`Cmd+T`);
     `G-Tab` slot = `Cmd+W` close tab.
