@@ -175,7 +175,11 @@
                         #binding-cells = <1>;
                         bindings = <&kp>;
                         release-after-ms = <5000>;
-                        quick-release;
+                        // quick-release deliberately omitted: it has known bad interactions
+                        // with sticky keys activated through a hold-tap (ZMK issues #3279,
+                        // #814) - sk_hyper is the tap sub-behavior of hyper_ht. Without it,
+                        // the modifier releases on the next key's release instead of its
+                        // press, which is fine for a single-hotkey one-shot use case.
                 };
                 // Hold = hold the modifier (plain &kp); tap = one-shot the
                 // modifier (sk_hyper). Both params of a call site should be
