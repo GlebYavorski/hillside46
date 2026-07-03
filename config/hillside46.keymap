@@ -35,6 +35,9 @@
 /* Hyper = Ctrl+Opt+Cmd (mac AeroSpace) / Ctrl+Alt+Win (FancyZones) - same three mods.
  * Use HYPER(key) instead of spelling LC(LA(LG(key))) by hand. */
 #define HYPER(k) LC(LA(LG(k)))
+/* Hyper as a bare modifier (no extra keycode) - for hold-tap "hold" params that
+ * should just press/release the three mods, e.g. `&mt HYPER_HOLD RETURN`. */
+#define HYPER_HOLD LC(LA(LGUI))
 
 #define XXX &none
 #define ___ &trans
@@ -145,7 +148,29 @@
                         flavor = "hold-preferred";
                         tapping-term-ms = <200>;
                         bindings = <&mo>, <&ss_cw>;
-                };           
+                };
+                // Dedicated sticky-key for Hyper one-shot (separate from the
+                // generic &sk used by ss_cw, so this 5s timeout doesn't affect
+                // caps-word's sticky-shift behavior).
+                sk_hyper: sticky_key_hyper {
+                        compatible = "zmk,behavior-sticky-key";
+                        label = "SK_HYPER";
+                        #binding-cells = <1>;
+                        bindings = <&kp>;
+                        release-after-ms = <5000>;
+                        quick-release;
+                };
+                // Hold = hold the modifier (plain &kp); tap = one-shot the
+                // modifier (sk_hyper). Both params of a call site should be
+                // the same modifier expression, e.g. `&hyper_ht HYPER_HOLD HYPER_HOLD`.
+                hyper_ht: hyper_hold_tap {
+                        compatible = "zmk,behavior-hold-tap";
+                        label = "HYPER_HT";
+                        #binding-cells = <2>;
+                        flavor = "balanced";
+                        tapping-term-ms = <200>;
+                        bindings = <&kp>, <&sk_hyper>;
+                };
         };
         macros {
                 win_left: win_left_macro {
@@ -197,20 +222,23 @@
 
                 def_mac_layer {
 /* QWERTY macOS (boot default, layer 0) | G-Tab=Cmd+Tab (switch to last app; tap toggles 2 most recent)
- * thumbs left: ZJ/BSPC (zellij, leftmost) · APP/TAB (app tabs+splits) · NUM · WM_MAC (window mgmt)
- * thumbs right: WM_MAC · NAV_MAC · APP/BSPC (app, mirror) · ZJ/DEL (zellij, mirror)
+ * thumbs left: ZJ/BSPC (zellij, leftmost) · APP/TAB (app tabs+splits) · NUM · Hyper hold/Enter tap
+ * thumbs right: Hyper hold/one-shot tap (5s) · NAV_MAC · APP/BSPC (app, mirror) · ZJ/DEL (zellij, mirror)
+ * Inner thumbs hold = raw Hyper (Ctrl+Opt+Cmd) modifier, no layer switch - press any Hyper
+ * hotkey (AeroSpace/OmniWM) while held. Right thumb tap = one-shot Hyper (sticky, 5s idle timeout).
+ * WM_MAC layer (below) is no longer wired to any key; kept for possible future rebinding.
  * HRM mac (Cmd<->Ctrl swapped vs Win): A=Ctrl S=Opt D=Shift F=Cmd  /  J=Cmd K=Shift L=Opt ;=Ctrl  (Cmd on index, Ctrl on pinky)
  * -------------------------------------------------------------------------------------------------------------------------------------
  * |  `    |   Q   |   W   |   E   |   R   |   T   |-----------------------------------|   Y   |   U   |   I   |   O   |   P   |  [/]  |
  * | G-Tab |   A   |   S   |   D   |   F   |   G   |-----------------------------------|   H   |   J   |   K   |   L   |   ;   |   '   |
  * |   -   |   Z   |   X   |   C   |   V   |   B   |  ESC  |-------------------|RA/INS |   N   |   M   |   ,   |   .   |   /   |   \   |
- *                                 |ZJ/BSPC|APP/TAB|NUM/SPC|WM/ENT |WM/ENT |NAV/CW |APP/BSP|ZJ/DEL |
+ *                                 |ZJ/BSPC|APP/TAB|NUM/SPC|HYP/ENT|HYP/OSH|NAV/CW |APP/BSP|ZJ/DEL |
  */
                         bindings = <
 &kp GRAVE      &kp Q &kp W &kp E &kp R &kp T &kp Y                                                    &kp U   &kp I  &kp O   &kp P    &mt RBKT LBKT
 &kp LG(TAB)    &hml LCTRL A &hml LALT S &hml LSHIFT D &hml LGUI F  &kp G                              &kp H  &hmr RGUI J &hmr RSHIFT K &hmr LALT L &hmr RCTRL SEMI &kp SQT
 &kp MINUS      &kp Z &kp X &kp C &kp V &kp B   &kp ESC                               &mt RALT INSERT  &kp N  &kp M  &kp COMMA    &kp DOT &kp FSLH &kp BSLH
-                                &lt ZJ BSPC &lt APP TAB &lt NUM SPACE &lt WM_MAC RETURN     &lt WM_MAC RETURN &cw_ht NAV_MAC 0 &lt APP BSPC &lt ZJ DEL
+                                &lt ZJ BSPC &lt APP TAB &lt NUM SPACE &mt HYPER_HOLD RETURN     &hyper_ht HYPER_HOLD HYPER_HOLD &cw_ht NAV_MAC 0 &lt APP BSPC &lt ZJ DEL
                         >;
                 };
 
@@ -313,7 +341,11 @@ XXX         &kp KP_N1   &kp KP_N2 &kp KP_N3 &kp KP_N4 &kp KP_N5  ___            
                 };
 
                 wm_mac_layer {
-/* WM_MAC (macOS window management) - AeroSpace control via Hyper (GAC = Ctrl+Opt+Cmd) chords
+/* WM_MAC (macOS window management) - DORMANT: no key in this keymap activates this
+ * layer anymore. Superseded by the raw Hyper hold on def_mac_layer's inner thumbs
+ * (see that layer's comment). Kept for possible future rebinding; the chord table
+ * below is only accurate if this layer is wired to a key again.
+ * AeroSpace control via Hyper (GAC = Ctrl+Opt+Cmd) chords
  * left: workspaces 1-9 numpad aligned with NUM layer's digits | H-Tab back-and-forth (over Cmd+Tab) | T/G/B = H-[ prev / H-] next / H-0 workspace 0
  * right: focus on home row (H-HJKL) | move above home row (Y/U/I/O = HS-HJKL) | resize M/, = H-- / H-= | layout: N = tiles (H-/), . = accordion (H-,) | ; (pinky) = HS-; -> AeroSpace service mode
  * -------------------------------------------------------------------------------------------------------------------------------------

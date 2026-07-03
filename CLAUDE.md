@@ -28,7 +28,7 @@ by default; Win/Lin requires an ADJ switch.
 | 4 | WM      | Window management (Win/Lin: Win+1..9, Win+arrows) |
 | 5 | FZ      | FancyZones, snap, virtual desktops (Win)          |
 | 6 | NAV_MAC | Navigation for macOS                              |
-| 7 | WM_MAC  | Window management (macOS via AeroSpace)           |
+| 7 | WM_MAC  | Window management (macOS via AeroSpace) — dormant, see below |
 | 8 | APP     | App tabs + splits (mac; 2nd-from-edge left thumb) |
 | 9 | ZJ      | Zellij tabs/panes (mac; outermost thumbs)         |
 | 10| ADJ     | Bluetooth, system, OS switching                   |
@@ -81,11 +81,27 @@ in Win order.
 - **Cmd+Tab** (DEF_MAC, on the AC-Tab key) switches between apps (tap = the two most
   recent apps). To switch between WINDOWS (like alt-tab on Windows) install the AltTab
   app; windows of a single app — Cmd+` (backtick).
-- **Window management** (WM_MAC): driven by [AeroSpace](https://nikitabobko.github.io/AeroSpace/),
+- **Window management**: driven by [AeroSpace](https://nikitabobko.github.io/AeroSpace/),
   install it (`brew install --cask nikitabobko-tap/aerospace`) and place the project's
   `~/.aerospace.toml`. AeroSpace bindings live on **Hyper = `Ctrl+Opt+Cmd`** (not the
   default `Alt`, which collides with zellij's `Alt+hjkl/-/=/f/i/n/o/p` and several
-  Cmd+Opt+* macOS shortcuts). WM_MAC sends Hyper-chords matching the config:
+  Cmd+Opt+* macOS shortcuts).
+
+  Hyper is reached via the two inner thumbs on `def_mac_layer` (`HYP/ENT` left slot,
+  `HYP/OSH` right slot — see that layer's keymap comment for exact positions): hold
+  either one to hold the Hyper modifier for as long as needed and press any AeroSpace
+  (or OmniWM) hotkey defined in `~/.aerospace.toml` — no dedicated ZMK layer required.
+  The right thumb's tap is a one-shot Hyper (sticky: applies to the next keypress, or
+  clears after 5s idle) for single-chord use without holding.
+
+  AeroSpace has `start-at-login = false` in the shipped config — launch it manually
+  (Spotlight → "AeroSpace") or flip the flag if you want auto-start. Without AeroSpace
+  running, Hyper chords are no-ops.
+
+  The `WM_MAC` layer below is dormant — no key in the keymap activates it anymore,
+  since the inner thumbs now send a raw Hyper hold/one-shot instead of switching to
+  this layer. It's kept for possible future rebinding. Its fixed Hyper-chord table
+  (accurate only if the layer is wired to a key again):
 
   | Layer keys (left)              | Hyper chord     | AeroSpace action                  |
   |--------------------------------|-----------------|-----------------------------------|
@@ -99,10 +115,6 @@ in Win order.
   | Y U I O (row above home)       | ⌃⌥⌘+⇧+H/J/K/L   | `move left / down / up / right`   |
   | M / `,`                        | ⌃⌥⌘+- / ⌃⌥⌘+=  | `resize smart -50 / +50`          |
   | `;` (right pinky home row)     | ⌃⌥⌘⇧+;          | `mode service` (enter service binding mode) |
-
-  AeroSpace has `start-at-login = false` in the shipped config — launch it manually
-  (Spotlight → "AeroSpace") or flip the flag if you want auto-start. Without AeroSpace
-  running, the Hyper-chords above are no-ops.
 
 - **ZJ (zellij layer)** — held via the **outermost thumbs** (left BSPC / right DEL slots)
   on DEF_MAC (symmetric, mirroring APP/WM_MAC). The zellij config (`~/.config/zellij/config.kdl`)
