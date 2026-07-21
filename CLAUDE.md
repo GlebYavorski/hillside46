@@ -28,18 +28,16 @@ by default; Win/Lin requires an ADJ switch.
 | 4 | WM      | Window management (Win/Lin: Win+1..9, Win+arrows) |
 | 5 | FZ      | FancyZones, snap, virtual desktops (Win)          |
 | 6 | NAV_MAC | Navigation for macOS                              |
-| 7 | WM_MAC  | Window management (macOS via AeroSpace) — dormant, see below |
-| 8 | APP     | App tabs + splits (mac; 2nd-from-edge left thumb) |
-| 9 | ZJ      | Zellij tabs/panes (mac) — dormant, see below       |
-| 10| ADJ     | Bluetooth, system, OS switching                   |
+| 7 | APP     | App tabs + splits (mac; 2nd-from-edge left thumb) |
+| 8 | ADJ     | Bluetooth, system, OS switching                   |
 
 ADJ is activated via a conditional_layer when NUM and NAV are held simultaneously
-(works with both NAV and NAV_MAC — two tri_layer entries: `<2 3>` and `<2 6>` → 10).
+(works with both NAV and NAV_MAC — two tri_layer entries: `<2 3>` and `<2 6>` → 8).
 
 ## Target OSes (Win/Lin ↔ macOS)
 
 The config keeps two parallel bases:
-- **macOS** (default on boot, BT profile 0): layers DEF_MAC / NAV_MAC / WM_MAC / APP / ZJ
+- **macOS** (default on boot, BT profile 0): layers DEF_MAC / NAV_MAC / APP
 - **Win/Lin** (BT profile 1): layers DEF / NAV / WM / FZ
 
 Switching is done with keys in the ADJ layer (top row of the left half, above BT_SEL 0/1):
@@ -105,46 +103,16 @@ in Win order.
   (Spotlight → "AeroSpace") or flip the flag if you want auto-start. Without AeroSpace
   running, Hyper chords are no-ops.
 
-  The `WM_MAC` layer below is dormant — no key in the keymap activates it anymore,
-  since the inner thumbs now send a raw Hyper hold/one-shot instead of switching to
-  this layer. It's kept for possible future rebinding. Its fixed Hyper-chord table
-  (accurate only if the layer is wired to a key again):
-
-  | Layer keys (left)              | Hyper chord     | AeroSpace action                  |
-  |--------------------------------|-----------------|-----------------------------------|
-  | W E R / S D F / X C V          | ⌃⌥⌘+7..9/4..6/1..3 | `workspace 7..9 / 4..6 / 1..3` (aligned with NUM layer digits) |
-  | `AC-Tab` slot (col 1, mid row) | ⌃⌥⌘+Tab         | `workspace-back-and-forth`        |
-  | T / G                          | ⌃⌥⌘+[ / ⌃⌥⌘+]   | `workspace prev` / `workspace next` (G is lower → next, easier to reach) |
-
-  | Layer keys (right)             | Hyper chord     | AeroSpace action                  |
-  |--------------------------------|-----------------|-----------------------------------|
-  | H J K L (home row)             | ⌃⌥⌘+H/J/K/L     | `focus left / down / up / right`  |
-  | Y U I O (row above home)       | ⌃⌥⌘+⇧+H/J/K/L   | `move left / down / up / right`   |
-  | M / `,`                        | ⌃⌥⌘+- / ⌃⌥⌘+=  | `resize smart -50 / +50`          |
-  | `;` (right pinky home row)     | ⌃⌥⌘⇧+;          | `mode service` (enter service binding mode) |
-
-- **ZJ (zellij layer)** — dormant: the outermost thumbs on `def_mac_layer` that used to hold
-  this layer (left BSPC / right DEL slots) are now fully disabled (`&none`); no key activates
-  ZJ anymore. Kept for possible future rebinding. The zellij config (`~/.config/zellij/config.kdl`)
-  is **not** modified: the layer drives existing binds. Layout mirrors WM_MAC (accurate only
-  if this layer is wired to a key again):
-  - Direct Alt-chords (zellij normal mode): `A-hjkl` focus, `A--`/`A-=` resize,
-    `A-f` floating, `A-]` next swap layout.
-  - Mode sequences via two-param ZMK macros: `zj_seq(M,K)` = hold Ctrl, tap M, release,
-    tap K — for binds that auto-return to normal mode (`C-t,1..9` go-to-tab, `C-t,n` new
-    tab, `C-p,f` fullscreen). `zj_seq_esc` appends Esc — for binds that stay in the mode
-    (`C-t,h`/`C-t,l` prev/next tab, `C-t,Tab` toggle last tab, `C-h,hjkl` move pane).
-  - Left half: tabs 1-9 on the NUM-aligned numpad, T/G = prev/next tab, B = new tab,
-    G-Tab slot = toggle last tab. Right half: focus on home row, move pane on Y/U/I/O,
-    resize on M/`,`, floating/layout on N/`.`, fullscreen on `;`.
-  Requires the terminal's option-as-alt (kitty: `macos_option_as_alt yes`) so Option reaches zellij as Alt.
+  The inner thumbs send a raw Hyper hold/one-shot rather than switching to a
+  dedicated ZMK layer, so window-management chords are defined entirely in the WM
+  config (AeroSpace/OmniWM) and can be changed there without reflashing.
 
 - **APP (app-level tabs + splits)** — held via the **2nd-from-edge left thumb** (TAB slot)
   or, mirrored, the **right BSPC thumb** on DEF_MAC. Hold with the hand opposite the keys you
   press: left thumb for the right-hand split keys, right thumb for the left-hand tab keys.
-  The outermost thumbs (left/right) are disabled — see ZJ above. Gives cross-hand control of
-  tabs/splits across Firefox, kitty, Obsidian, Linear, DBGate using a single chord per action;
-  layout mirrors WM_MAC/ZJ. No app-config edits except Obsidian (below).
+  The outermost thumbs (left/right) are disabled. Gives cross-hand control of
+  tabs/splits across Firefox, kitty, Obsidian, Linear, DBGate using a single chord per action.
+  No app-config edits except Obsidian (below).
   - Left half (tabs, works in all 5 apps): numpad `Cmd+1..9` = go-to tab (aligned with NUM
     digits); T/G = prev/next tab (`Ctrl+Shift+Tab` / `Ctrl+Tab`); B = new tab (`Cmd+T`);
     `G-Tab` slot = `Cmd+W` close tab.
