@@ -94,6 +94,13 @@ in Win order.
   The right thumb's tap is a one-shot Hyper (sticky: applies to the next keypress, or
   clears after 5s idle) for single-chord use without holding.
 
+  **Known issue:** the one-shot tap doesn't currently work on real hardware — the
+  modifier fails to apply to the next keypress (confirmed on-device). Hold works fine;
+  only the tap/sticky path is affected. Removing `quick-release` from `sk_hyper` (a
+  documented ZMK sticky-key/hold-tap interaction bug, issues #3279/#814) did not fix
+  it. Root cause not yet found; not currently a priority — see `sk_hyper`'s comment in
+  the keymap for details.
+
   AeroSpace has `start-at-login = false` in the shipped config — launch it manually
   (Spotlight → "AeroSpace") or flip the flag if you want auto-start. Without AeroSpace
   running, Hyper chords are no-ops.
