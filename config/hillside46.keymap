@@ -21,10 +21,8 @@
 #define WM 4
 #define FZ 5
 #define NAV_MAC 6
-#define WM_MAC 7
-#define APP 8
-#define ZJ 9
-#define ADJ 10
+#define APP 7
+#define ADJ 8
 
 #define Undo   LC(Z)
 #define Redo   LC(Y)
@@ -63,12 +61,12 @@
             compatible = "zmk,conditional-layers";
             tri_layer {
                 if-layers = <2 3>;
-                then-layer = <10>;
+                then-layer = <8>;
             };
             // mac: NUM + NAV_MAC also reaches ADJ
             tri_layer_mac {
                 if-layers = <2 6>;
-                then-layer = <10>;
+                then-layer = <8>;
             };
         };
         behaviors {
@@ -217,27 +215,6 @@
                         #binding-cells = <0>;
                         bindings = <&macro_press &kp LGUI>, <&macro_tap &kp DOWN>, <&macro_release &kp LGUI>;
                 };
-                /* zellij mode sequence: hold Ctrl, tap M (mode key), release Ctrl, tap K (action).
-                 * For zellij binds that auto-return to normal mode (GoToTab N, NewTab, fullscreen). */
-                zj_seq: zj_seq_macro {
-                        compatible = "zmk,behavior-macro-two-param";
-                        #binding-cells = <2>;
-                        bindings = <&macro_press &kp LCTRL>,
-                                   <&macro_param_1to1>, <&macro_tap &kp MACRO_PLACEHOLDER>,
-                                   <&macro_release &kp LCTRL>,
-                                   <&macro_param_2to1>, <&macro_tap &kp MACRO_PLACEHOLDER>;
-                };
-                /* Same, plus trailing Esc — for zellij binds that stay in the mode
-                 * (tab prev/next/toggle, move pane). */
-                zj_seq_esc: zj_seq_esc_macro {
-                        compatible = "zmk,behavior-macro-two-param";
-                        #binding-cells = <2>;
-                        bindings = <&macro_press &kp LCTRL>,
-                                   <&macro_param_1to1>, <&macro_tap &kp MACRO_PLACEHOLDER>,
-                                   <&macro_release &kp LCTRL>,
-                                   <&macro_param_2to1>, <&macro_tap &kp MACRO_PLACEHOLDER>,
-                                   <&macro_tap &kp ESC>;
-                };
         };
 
 
@@ -253,8 +230,7 @@
  * KNOWN ISSUE: the one-shot tap does not apply Hyper to the next keypress on real hardware
  * (confirmed on-device); hold works fine. Removing sk_hyper's quick-release did not fix it
  * (see sk_hyper's own comment below). Root cause not yet found - not currently a priority.
- * WM_MAC and ZJ layers (below) are no longer wired to any key; kept for possible future rebinding.
- * The outermost thumbs (leftmost/rightmost) are fully disabled (&none) - previously ZJ/BSPC and ZJ/DEL.
+ * The outermost thumbs (leftmost/rightmost) are fully disabled (&none).
  * HRM mac (Cmd<->Ctrl swapped vs Win): A=Ctrl S=Opt D=Shift F=Cmd  /  J=Cmd K=Shift L=Opt ;=Ctrl  (Cmd on index, Ctrl on pinky)
  * -------------------------------------------------------------------------------------------------------------------------------------
  * |  `    |   Q   |   W   |   E   |   R   |   T   |-----------------------------------|   Y   |   U   |   I   |   O   |   P   |  [/]  |
@@ -368,30 +344,8 @@ XXX         &kp KP_N1   &kp KP_N2 &kp KP_N3 &kp KP_N4 &kp KP_N5  ___            
                         >;
                 };
 
-                wm_mac_layer {
-/* WM_MAC (macOS window management) - DORMANT: no key in this keymap activates this
- * layer anymore. Superseded by the raw Hyper hold on def_mac_layer's inner thumbs
- * (see that layer's comment). Kept for possible future rebinding; the chord table
- * below is only accurate if this layer is wired to a key again.
- * AeroSpace control via Hyper (GAC = Ctrl+Opt+Cmd) chords
- * left: workspaces 1-9 numpad aligned with NUM layer's digits | H-Tab back-and-forth (over Cmd+Tab) | T/G/B = H-[ prev / H-] next / H-0 workspace 0
- * right: focus on home row (H-HJKL) | move above home row (Y/U/I/O = HS-HJKL) | resize M/, = H-- / H-= | layout: N = tiles (H-/), . = accordion (H-,) | ; (pinky) = HS-; -> AeroSpace service mode
- * -------------------------------------------------------------------------------------------------------------------------------------
- * |       |       |  H-7  |  H-8  |  H-9  |  H-[  |-----------------------------------| HS-H  | HS-J  | HS-K  | HS-L  |       |       |
- * | H-Tab |       |  H-4  |  H-5  |  H-6  |  H-]  |-----------------------------------|  H-H  |  H-J  |  H-K  |  H-L  | HS-;  |       |
- * |       |       |  H-1  |  H-2  |  H-3  |  H-0  |       |-------------------|       |  H-/  |  H--  |  H-=  |  H-,  |       |       |
- *                                 |       |       |       |       |---|       |       |       |       |
- */
-                        bindings = <
-XXX                  XXX  &kp HYPER(N7)  &kp HYPER(N8)  &kp HYPER(N9)  &kp HYPER(LBKT)                                  &kp HYPER(LS(H))  &kp HYPER(LS(J))  &kp HYPER(LS(K))  &kp HYPER(LS(L))  XXX XXX
-&kp HYPER(TAB)       XXX  &kp HYPER(N4)  &kp HYPER(N5)  &kp HYPER(N6)  &kp HYPER(RBKT)                                  &kp HYPER(H)      &kp HYPER(J)      &kp HYPER(K)      &kp HYPER(L)      &kp HYPER(LS(SEMI)) XXX
-XXX                  XXX  &kp HYPER(N1)  &kp HYPER(N2)  &kp HYPER(N3)  &kp HYPER(N0)  ___                          ___  &kp HYPER(FSLH)   &kp HYPER(MINUS)  &kp HYPER(EQUAL)  &kp HYPER(COMMA)  XXX XXX
-                                                                                                  ___ ___ ___ ___                          ___ ___ ___ ___
-                        >;
-                };
-
                 app_layer {
-/* APP (app-level tabs + splits) - hold APP/TAB (2nd-from-edge left thumb) on DEF_MAC; mirrors WM_MAC/ZJ.
+/* APP (app-level tabs + splits) - hold APP/TAB (2nd-from-edge left thumb) on DEF_MAC.
  * No app config edits except Obsidian (4 focus binds). Chords chosen to hit all 5 target apps:
  *   tabs: Cmd+1..9 go-to (FF/Linear/Obsidian/kitty), C-S-Tab/C-Tab prev/next (all 5), Cmd+T/Cmd+W new/close.
  *   splits (kitty always; Obsidian focus after binds): GA-hjkl focus, GAS-hjkl move,
@@ -410,32 +364,6 @@ XXX                  XXX  &kp HYPER(N1)  &kp HYPER(N2)  &kp HYPER(N3)  &kp HYPER
 XXX          &kp LG(LS(N5))       &kp LG(N7)  &kp LG(N8)  &kp LG(N9)  &kp LC(LS(TAB))                                  &kp LG(LA(LS(H)))  &kp LG(LA(LS(J)))  &kp LG(LA(LS(K)))  &kp LG(LA(LS(L)))  XXX  XXX
 &kp LG(W)    &kp LG(LC(LS(N4)))   &kp LG(N4)  &kp LG(N5)  &kp LG(N6)  &kp LC(TAB)                                      &kp LG(LA(H))      &kp LG(LA(J))      &kp LG(LA(K))      &kp LG(LA(L))      XXX  XXX
 XXX          XXX                  &kp LG(N1)  &kp LG(N2)  &kp LG(N3)  &kp LG(T)  ___                            ___    &kp LG(D)          &kp LG(LA(MINUS))  &kp LG(LA(EQUAL))  &kp LG(LS(D))      XXX  XXX
-                                                                                       ___ ___ ___ ___                          ___ ___ ___ ___
-                        >;
-                };
-
-                zj_layer {
-/* ZJ (zellij) - DORMANT: no key in this keymap activates this layer anymore. The outermost
- * thumbs on def_mac_layer that used to hold this (ZJ/BSPC left, ZJ/DEL right) are now fully
- * disabled (&none). Kept for possible future rebinding.
- * Zellij config untouched: layer drives existing binds — direct Alt-chords from normal mode
- * (A-hjkl focus, A--/A-= resize, A-f floating, A-] next layout) plus mode sequences via
- * zj_seq(M,K) = Ctrl+M, K (binds that auto-return to normal) and zj_seq_esc (binds that stay
- * in mode: tab prev/next/toggle, move pane — trailing Esc exits).
- * left: tabs 1-9 numpad aligned with NUM digits | lastT (G-Tab slot) = C-t,Tab toggle last tab |
- *       T/G = prev/next tab (C-t,h / C-t,l) | B = new tab (C-t,n)
- * right: focus home row A-hjkl | move pane Y/U/I/O = C-h,hjkl | resize M/, = A--/A-= |
- *        N = floating A-f, . = next layout A-] | ; (pinky) = fullscreen C-p,f
- * -------------------------------------------------------------------------------------------------------------------------------------
- * |       |       | tab 7 | tab 8 | tab 9 | prevT |-----------------------------------| MOV-h | MOV-j | MOV-k | MOV-l |       |       |
- * | lastT |       | tab 4 | tab 5 | tab 6 | nextT |-----------------------------------|  A-h  |  A-j  |  A-k  |  A-l  | fulls |       |
- * |       |       | tab 1 | tab 2 | tab 3 | newT  |       |-------------------|       |  A-f  |  A--  |  A-=  |  A-]  |       |       |
- *                                 |       |       |       |       |---|       |       |       |       |
- */
-                        bindings = <
-XXX                XXX  &zj_seq T N7  &zj_seq T N8  &zj_seq T N9  &zj_seq_esc T H                                  &zj_seq_esc H H  &zj_seq_esc H J  &zj_seq_esc H K  &zj_seq_esc H L  XXX          XXX
-&zj_seq_esc T TAB  XXX  &zj_seq T N4  &zj_seq T N5  &zj_seq T N6  &zj_seq_esc T L                                  &kp LA(H)        &kp LA(J)        &kp LA(K)        &kp LA(L)        &zj_seq P F  XXX
-XXX                XXX  &zj_seq T N1  &zj_seq T N2  &zj_seq T N3  &zj_seq T N  ___                            ___  &kp LA(F)        &kp LA(MINUS)    &kp LA(EQUAL)    &kp LA(RBKT)     XXX          XXX
                                                                                        ___ ___ ___ ___                          ___ ___ ___ ___
                         >;
                 };
