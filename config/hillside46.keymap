@@ -180,6 +180,9 @@
                         // #814) - sk_hyper is the tap sub-behavior of hyper_ht. Without it,
                         // the modifier releases on the next key's release instead of its
                         // press, which is fine for a single-hotkey one-shot use case.
+                        // KNOWN ISSUE: removing quick-release did NOT fix the one-shot tap on
+                        // real hardware (confirmed) - the modifier still fails to apply to the
+                        // next keypress. Root cause still unknown; not currently a priority.
                 };
                 // Hold = hold the modifier (plain &kp); tap = one-shot the
                 // modifier (sk_hyper). Both params of a call site should be
@@ -244,9 +247,12 @@
                 def_mac_layer {
 /* QWERTY macOS (boot default, layer 0) | G-Tab=Cmd+Tab (switch to last app; tap toggles 2 most recent)
  * thumbs left: (unused, leftmost) · APP/TAB (app tabs+splits) · NUM · Hyper hold/Enter tap
- * thumbs right: Hyper hold/one-shot tap (5s) · NAV_MAC · APP/BSPC (app, mirror; Shift+tap = Delete) · (unused, rightmost)
+ * thumbs right: Hyper hold/one-shot tap (5s, KNOWN BROKEN - see below) · NAV_MAC · APP/BSPC (app, mirror; Shift+tap = Delete) · (unused, rightmost)
  * Inner thumbs hold = raw Hyper (Ctrl+Opt+Cmd) modifier, no layer switch - press any Hyper
  * hotkey (AeroSpace/OmniWM) while held. Right thumb tap = one-shot Hyper (sticky, 5s idle timeout).
+ * KNOWN ISSUE: the one-shot tap does not apply Hyper to the next keypress on real hardware
+ * (confirmed on-device); hold works fine. Removing sk_hyper's quick-release did not fix it
+ * (see sk_hyper's own comment below). Root cause not yet found - not currently a priority.
  * WM_MAC and ZJ layers (below) are no longer wired to any key; kept for possible future rebinding.
  * The outermost thumbs (leftmost/rightmost) are fully disabled (&none) - previously ZJ/BSPC and ZJ/DEL.
  * HRM mac (Cmd<->Ctrl swapped vs Win): A=Ctrl S=Opt D=Shift F=Cmd  /  J=Cmd K=Shift L=Opt ;=Ctrl  (Cmd on index, Ctrl on pinky)
