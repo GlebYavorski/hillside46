@@ -167,12 +167,20 @@
                         bindings = <&mo>, <&ss_cw>;
                 };
                 // hold: momentary layer | tap: bs_del (Backspace, Shift+tap = Delete)
+                // quick-tap-ms is what makes Backspace repeatable: on the mac base this key
+                // is the ONLY Backspace (pos 44; the outer thumbs are physically gone), so
+                // without it there is no way to hold Backspace down at all. Tap it, then
+                // re-press within QUICK_TAP_MS and keep holding -> the tap branch is forced
+                // and the host's key repeat takes over. Verified in ZMK v0.3.0
+                // behavior_hold_tap.c: decide_hold_preferred() maps HT_QUICK_TAP to
+                // STATUS_TAP, so this works despite the hold-preferred flavor.
                 app_bs_ht: app_backspace_delete_ht {
                         compatible = "zmk,behavior-hold-tap";
                         label = "APP_BS_HT";
                         #binding-cells = <2>;
                         flavor = "hold-preferred";
                         tapping-term-ms = <200>;
+                        quick-tap-ms = <QUICK_TAP_MS>;
                         bindings = <&mo>, <&bs_del>;
                 };
                 // Thumb layer-tap, replaces ZMK's stock &lt. The stock &lt is
