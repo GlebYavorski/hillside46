@@ -23,22 +23,30 @@ by default; Win/Lin requires an ADJ switch.
 |---|---------|---------------------------------------------------|
 | 0 | DEF_MAC | QWERTY base for macOS (boot default)              |
 | 1 | DEF     | QWERTY base (Win/Lin), homerow mods               |
-| 2 | NUM     | Numbers, symbols, F-keys (shared)                 |
+| 2 | NUM     | Numbers, symbols, F-keys (Win/Lin)                |
 | 3 | NAV     | Navigation, symbols, media (Win/Lin)              |
 | 4 | WM      | Window management (Win/Lin: Win+1..9, Win+arrows) |
 | 5 | FZ      | FancyZones, snap, virtual desktops (Win)          |
 | 6 | NAV_MAC | Navigation for macOS                              |
 | 7 | APP     | App tabs + splits (mac; 2nd-from-edge left thumb) |
-| 8 | ADJ     | Bluetooth, system, OS switching                   |
+| 8 | NUM_MAC | Numbers, symbols, F-keys (macOS)                  |
+| 9 | ADJ     | Bluetooth, system, OS switching                   |
 
-ADJ is activated via a conditional_layer when NUM and NAV are held simultaneously
-(works with both NAV and NAV_MAC — two tri_layer entries: `<2 3>` and `<2 6>` → 8).
+ADJ is activated via a conditional_layer when the NUM and NAV keys are held
+simultaneously — two tri_layer entries, one per base: `<NUM NAV>` and
+`<NUM_MAC NAV_MAC>` → `ADJ`. `if-layers`/`then-layer` use the `#define` layer names,
+not raw indices, so inserting a layer no longer means hand-editing them.
+
+NUM and NUM_MAC are **full copies of each other**. They differ in exactly two
+bindings — positions 19 and 22, the right home row's Ctrl/Cmd pair — because mac puts
+Cmd on the index finger and Win puts Ctrl there (see the HRM section below). Any other
+edit to NUM must be mirrored into NUM_MAC and vice versa; each layer's comment says so.
 
 ## Target OSes (Win/Lin ↔ macOS)
 
 The config keeps two parallel bases:
-- **macOS** (default on boot, BT profile 0): layers DEF_MAC / NAV_MAC / APP
-- **Win/Lin** (BT profile 1): layers DEF / NAV / WM / FZ
+- **macOS** (default on boot, BT profile 0): layers DEF_MAC / NAV_MAC / NUM_MAC / APP
+- **Win/Lin** (BT profile 1): layers DEF / NAV / NUM / WM / FZ
 
 Switching is done with keys in the ADJ layer (top row of the left half, above BT_SEL 0/1):
 - above BT_SEL 0 → `&to DEF_MAC` (mac base)
@@ -58,8 +66,8 @@ hotkey modifier is used — it goes on the strongest finger, the index):
 
 So on mac, Cmd and Ctrl are swapped relative to Win: Cmd moves off the pinky onto
 the index (A=Ctrl, S=Opt, D=Shift, F=Cmd, mirrored on the right). Shift and Alt stay
-on the same fingers in both OSes. The shared NUM layer was left as-is — its HRM stays
-in Win order.
+on the same fingers in both OSes. The number layer follows the same split: NUM keeps
+the Win order (`&`=Ctrl, `)`=Gui) and NUM_MAC the mac order (`&`=Cmd, `)`=Ctrl).
 
 ### Known limitations of mac mode
 - On boot/battery swap the keyboard always starts on layer 0 (DEF_MAC, mac base) —

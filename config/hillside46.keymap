@@ -12,8 +12,12 @@
 
 // layer shortcuts, must match order in which they are defined below
 // bases (DEF_MAC, DEF) are lowest so momentary/overlay layers stack above them;
-// ADJ is highest so it shows above NAV_MAC when reached via NUM+NAV_MAC.
+// ADJ is highest so it shows above NAV_MAC when reached via NUM_MAC+NAV_MAC.
 // DEF_MAC is layer 0 so the keyboard boots into mac mode by default.
+// NUM (Win/Lin) and NUM_MAC are full copies of each other; they differ ONLY in the
+// right-hand home-row mod order (index = Ctrl on Win, index = Cmd on mac), matching
+// the split already used by DEF/DEF_MAC and NAV/NAV_MAC. Any other edit to one MUST
+// be mirrored into the other.
 #define DEF_MAC 0
 #define DEF 1
 #define NUM 2
@@ -22,7 +26,8 @@
 #define FZ 5
 #define NAV_MAC 6
 #define APP 7
-#define ADJ 8
+#define NUM_MAC 8
+#define ADJ 9
 
 #define Undo   LC(Z)
 #define Redo   LC(Y)
@@ -66,14 +71,15 @@
 / {
         conditional_layers {
             compatible = "zmk,conditional-layers";
-            tri_layer {
-                if-layers = <2 3>;
-                then-layer = <8>;
+            // Win/Lin: NUM + NAV reaches ADJ
+            tri_layer_win {
+                if-layers = <NUM NAV>;
+                then-layer = <ADJ>;
             };
-            // mac: NUM + NAV_MAC also reaches ADJ
+            // mac: NUM_MAC + NAV_MAC reaches ADJ
             tri_layer_mac {
-                if-layers = <2 6>;
-                then-layer = <8>;
+                if-layers = <NUM_MAC NAV_MAC>;
+                then-layer = <ADJ>;
             };
         };
         behaviors {
@@ -274,7 +280,7 @@
 
                 def_mac_layer {
 /* QWERTY macOS (boot default, layer 0) | G-Tab=Cmd+Tab (switch to last app; tap toggles 2 most recent)
- * thumbs left: (unused, leftmost) · APP/TAB (app tabs+splits) · NUM · Hyper hold/Enter tap
+ * thumbs left: (unused, leftmost) · APP/TAB (app tabs+splits) · NUM_MAC · Hyper hold/Enter tap
  * thumbs right: Hyper hold/one-shot tap (5s sticky) · NAV_MAC · APP/BSPC (app, mirror; Shift+tap = Delete) · (unused, rightmost)
  * Inner thumbs hold = raw Hyper (Ctrl+Opt+Cmd) modifier, no layer switch - press any Hyper
  * hotkey (AeroSpace/OmniWM) while held. Right thumb tap = one-shot Hyper (sticky, 5s idle timeout).
@@ -292,7 +298,7 @@
 &kp GRAVE      &kp Q &kp W &kp E &kp R &kp T &kp Y                                                    &kp U   &kp I  &kp O   &kp P    &mt RBKT LBKT
 &kp LG(TAB)    &hml LCTRL A &hml LALT S &hml LSHIFT D &hml LGUI F  &kp G                              &kp H  &hmr RGUI J &hmr RSHIFT K &hmr LALT L &hmr RCTRL SEMI &kp SQT
 &kp MINUS      &kp Z &kp X &kp C &kp V &kp B   &kp ESC                               &mt RALT INSERT  &kp N  &kp M  &kp COMMA    &kp DOT &kp FSLH &kp BSLH
-                                XXX &lt_t APP TAB &lt_t NUM SPACE &mt HYPER_HOLD RETURN     &hyper_ht HYPER_HOLD HYPER_HOLD &cw_ht NAV_MAC 0 &app_bs_ht APP 0 XXX
+                                XXX &lt_t APP TAB &lt_t NUM_MAC SPACE &mt HYPER_HOLD RETURN     &hyper_ht HYPER_HOLD HYPER_HOLD &cw_ht NAV_MAC 0 &app_bs_ht APP 0 XXX
                         >;
                 };
 
@@ -313,7 +319,8 @@
                 };
 
                 num_layer {
-/* NUM - left: numpad 789/456/123 | right: symbols ^&*() and F6-F11 | -/ and +* are tap-dance
+/* NUM (Win/Lin, reached from DEF) - left: numpad 789/456/123 | right: symbols ^&*() and F6-F11 | -/ and +* are tap-dance
+ * HRM right home row is in Win order (GASC): index = Ctrl. The mac copy is num_mac_layer below.
  * -------------------------------------------------------------------------------------------------------------------------------------
  * |       |   =   |   7   |   8   |   9   |  - /  |-----------------------------------|  F6   |  F7   |  F8   |  F9   |  F10  |  F11  |
  * | ENTER |   :   |   4   |   5   |   6   |  + *  |-----------------------------------|   ^   |   &   |   *   |   (   |   )   |   -   |
@@ -418,8 +425,29 @@ XXX          XXX                  &kp LG(N1)  &kp LG(N2)  &kp LG(N3)  &kp LG(T) 
                         >;
                 };
 
+                num_mac_layer {
+/* NUM macOS (reached from DEF_MAC) - full copy of NUM; the ONLY difference is the HRM
+ * order on the right home row: mac puts Cmd on the index and Ctrl on the pinky
+ * (CASG), so positions 19 and 22 swap RGUI <-> RCTRL. Keep every other binding in
+ * sync with num_layer above.
+ * left: numpad 789/456/123 | right: symbols ^&*() and F6-F11 | -/ and +* are tap-dance
+ * -------------------------------------------------------------------------------------------------------------------------------------
+ * |       |   =   |   7   |   8   |   9   |  - /  |-----------------------------------|  F6   |  F7   |  F8   |  F9   |  F10  |  F11  |
+ * | ENTER |   :   |   4   |   5   |   6   |  + *  |-----------------------------------|   ^   |   &   |   *   |   (   |   )   |   -   |
+ * | CALC  |  KP.  |   1   |   2   |   3   |   0   |       |-------------------|       |       |  KP7  |  KP8  |  KP9  |  KP0  |       |
+ *                                 |       |       |       |       |---|       |       |       |  F12  |
+ * HRM right home row mac: &=Cmd  *=Shift  (=Opt  )=Ctrl
+ */
+                        bindings = <
+XXX             &kp EQUAL  &kp N7 &kp N8 &kp N9 &td1 &kp F6                 &kp F7   &kp F8   &kp F9   &kp F10  &kp F11
+&kp ENTER        &kp COLON  &kp N4 &kp N5 &kp N6 &td2                        &kp CARET   &hmr RGUI AMPS &hmr RSHIFT STAR &hmr LALT LPAR &hmr RCTRL RPAR &kp MINUS
+&kp C_AL_CALC   &kp KP_DOT &kp N1 &kp N2 &kp N3 &kp N0 XXX              ___ ___    &kp KP_N7   &kp KP_N8   &kp KP_N9   &kp KP_N0   XXX
+                                                ___ ___ ___ ___     ___ ___ ___ &kp F12 
+                        >;
+                };
+
                 adj_layer {
-/* ADJUST - active when NUM+NAV held simultaneously | MAC/WIN switch OS base layer
+/* ADJUST - active when NUM+NAV (Win) or NUM_MAC+NAV_MAC (mac) held simultaneously | MAC/WIN switch OS base layer
  * Column 2 (MAC / BT 0) is the boot default — mac base lives on the first BT slot.
  * -------------------------------------------------------------------------------------------------------------------------------------
  * |       |  MAC  |  WIN  |       |       |       |-----------------------------------|       |  F11  |  F12  |PrtScr |EP_OFF | EP_ON |
