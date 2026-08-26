@@ -29,8 +29,9 @@
 #define NUM_MAC 8
 #define ADJ 9
 
-#define Undo   LC(Z)
-#define Redo   LC(Y)
+/* Windows legacy clipboard encodings, so the combos also work in terminals where
+ * Ctrl+C/V are taken. Undo/Redo have no such second encoding and are one HRM chord
+ * away anyway (HRM+Z), so they get no #define here. */
 #define Cut    LS(DEL)
 #define Copy   LC(INS)
 #define Paste  LS(INS)
@@ -103,14 +104,6 @@
                         #binding-cells = <0>;
                         tapping-term-ms = <200>;
                         bindings = <&kp KP_PLUS>, <&kp KP_ASTERISK>;
-                };
-                gresc: grave_escape {
-                        compatible = "zmk,behavior-mod-morph";
-                        label = "GRAVE_ESCAPE";
-                        #binding-cells = <0>;
-                        bindings = <&kp ESC>, <&kp GRAVE>;
-                        mods = <(MOD_LSFT|MOD_RSFT)>;
-                        keep-mods = <MOD_RSFT>;
                 };
                 // tap: Backspace | shift + tap: Delete (shift is consumed, plain DELETE is sent)
                 bs_del: backspace_delete {
