@@ -41,7 +41,14 @@
 #define ___ &trans
 
 /* Settings */
+// quick-tap-ms: re-tap within this window after the SAME key resolves as a tap and
+// enables hold-to-repeat. require-prior-idle-ms: if ANY other key was pressed less
+// than this long ago, the hold is suppressed and the tap is emitted - this is what
+// kills home-row-mod misfires mid-typing-burst. `global-quick-tap` used to tie the
+// two together (prior-idle == quick-tap-ms); it is deprecated in ZMK v0.3.0
+// (zmk,behavior-hold-tap.yaml), so they are set independently here.
 #define QUICK_TAP_MS 175
+#define PRIOR_IDLE_MS 150
 
 #include "combos.dtsi"
 
@@ -122,7 +129,7 @@
                         flavor = "balanced";
                         tapping-term-ms = <200>;
                         quick-tap-ms = <QUICK_TAP_MS>;
-                        global-quick-tap;
+                        require-prior-idle-ms = <PRIOR_IDLE_MS>;
                         hold-trigger-key-positions = <6 7 8 9 10 11 18 19 20 21 22 23 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45>;
                         hold-trigger-on-release;
                         bindings = <&kp>, <&kp>;
@@ -134,7 +141,7 @@
                         flavor = "balanced";
                         tapping-term-ms = <200>;
                         quick-tap-ms = <QUICK_TAP_MS>;
-                        global-quick-tap;
+                        require-prior-idle-ms = <PRIOR_IDLE_MS>;
                         hold-trigger-key-positions = <0 1 2 3 4 5 12 13 14 15 16 17 24 25 26 27 28 29 30 38 39 40 41 42 43 44 45>;
                         hold-trigger-on-release;
                         bindings = <&kp>, <&kp>;
