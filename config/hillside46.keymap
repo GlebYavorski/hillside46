@@ -171,6 +171,33 @@
                         tapping-term-ms = <200>;
                         bindings = <&mo>, <&bs_del>;
                 };
+                // Thumb layer-tap, replaces ZMK's stock &lt. The stock &lt is
+                // flavor "tap-preferred" with quick-tap-ms unset (default -1), which
+                // means two things:
+                //   a) rolling into a layer key faster than tapping-term emits the TAP
+                //      plus the BASE-layer key instead of the layer binding, so fast
+                //      entry into NUM/NAV/WM/FZ needs a deliberate ~200ms pause;
+                //   b) the tap keycode never auto-repeats when held, so Space,
+                //      Backspace and Tab cannot be held down.
+                // "balanced" resolves the hold as soon as another key is pressed AND
+                // released inside the term, which fixes (a). quick-tap-ms fixes (b).
+                // require-prior-idle-ms is the safety net that "tap-preferred" used to
+                // provide: rolling off SPACE onto the next letter mid-word no longer
+                // turns into an accidental layer, because the previous keypress is too
+                // recent for the hold to be allowed.
+                // Tuning knob: accidental layers still slipping through -> raise
+                // require-prior-idle-ms; entering a layer right after typing feels
+                // blocked -> lower it.
+                lt_t: layer_tap_thumb {
+                        compatible = "zmk,behavior-hold-tap";
+                        label = "LT_THUMB";
+                        #binding-cells = <2>;
+                        flavor = "balanced";
+                        tapping-term-ms = <200>;
+                        quick-tap-ms = <QUICK_TAP_MS>;
+                        require-prior-idle-ms = <PRIOR_IDLE_MS>;
+                        bindings = <&mo>, <&kp>;
+                };
                 // Dedicated sticky-key for Hyper one-shot (separate from the
                 // generic &sk used by ss_cw, so this 5s timeout doesn't affect
                 // caps-word's sticky-shift behavior).
@@ -265,7 +292,7 @@
 &kp GRAVE      &kp Q &kp W &kp E &kp R &kp T &kp Y                                                    &kp U   &kp I  &kp O   &kp P    &mt RBKT LBKT
 &kp LG(TAB)    &hml LCTRL A &hml LALT S &hml LSHIFT D &hml LGUI F  &kp G                              &kp H  &hmr RGUI J &hmr RSHIFT K &hmr LALT L &hmr RCTRL SEMI &kp SQT
 &kp MINUS      &kp Z &kp X &kp C &kp V &kp B   &kp ESC                               &mt RALT INSERT  &kp N  &kp M  &kp COMMA    &kp DOT &kp FSLH &kp BSLH
-                                XXX &lt APP TAB &lt NUM SPACE &mt HYPER_HOLD RETURN     &hyper_ht HYPER_HOLD HYPER_HOLD &cw_ht NAV_MAC 0 &app_bs_ht APP 0 XXX
+                                XXX &lt_t APP TAB &lt_t NUM SPACE &mt HYPER_HOLD RETURN     &hyper_ht HYPER_HOLD HYPER_HOLD &cw_ht NAV_MAC 0 &app_bs_ht APP 0 XXX
                         >;
                 };
 
@@ -281,7 +308,7 @@
 &kp GRAVE      &kp Q &kp W &kp E &kp R &kp T &kp Y                                                    &kp U   &kp I  &kp O   &kp P    &mt RBKT LBKT
 &kp LA(LC(TAB)) &hml LGUI A &hml LALT S &hml LSHIFT D &hml LCTRL F  &kp G                             &kp H  &hmr RCTRL J &hmr RSHIFT K &hmr LALT L &hmr RGUI SEMI &kp SQT
 &kp MINUS      &kp Z &kp X &kp C &kp V &kp B   &kp ESC                                   &kp INSERT  &kp N  &kp M  &kp COMMA    &kp DOT &kp FSLH &kp BSLH
-                                &lt WM BSPC &lt FZ TAB &lt NUM SPACE &lt WM RETURN     &lt WM RETURN &cw_ht NAV 0 &lt FZ BSPC &mt LALT DEL
+                                &lt_t WM BSPC &lt_t FZ TAB &lt_t NUM SPACE &lt_t WM RETURN     &lt_t WM RETURN &cw_ht NAV 0 &lt_t FZ BSPC &mt LALT DEL
                         >;
                 };
 
