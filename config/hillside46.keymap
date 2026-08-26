@@ -404,7 +404,7 @@ XXX         &kp KP_N1   &kp KP_N2 &kp KP_N3 &kp KP_N4 &kp KP_N5  ___            
                 app_layer {
 /* APP (app-level tabs + splits) - hold APP/TAB (2nd-from-edge left thumb) on DEF_MAC.
  * No app config edits except Obsidian (4 focus binds). Chords chosen to hit all 5 target apps:
- *   tabs: Cmd+1..9 go-to (FF/Linear/Obsidian/kitty), C-S-Tab/C-Tab prev/next (all 5), Cmd+T/Cmd+W new/close.
+ *   tabs: Cmd+1..9 go-to (FF/Linear/Obsidian/kitty), SC-Tab/C-Tab prev/next (all 5), Cmd+T/Cmd+W new/close.
  *   splits (kitty always; Obsidian focus after binds): GA-hjkl focus, GAS-hjkl move,
  *     GA--/GA-= resize, G-D/GS-D v/h-split — all match the user's kitty.conf (Cmd+Opt = GA).
  * pinky col (Q/A/Z): GS-5 = Cmd+Shift+5 screenshot UI | GSC-4 = Cmd+Ctrl+Shift+4 region->clipboard (no file).
@@ -412,7 +412,7 @@ XXX         &kp KP_N1   &kp KP_N2 &kp KP_N3 &kp KP_N4 &kp KP_N5  ___            
  * right: focus home row GA-hjkl | move Y/U/I/O = GAS-hjkl | resize M/, = GA--/GA-= | N/. = G-D/GS-D
  * NOTE: GA-H (Cmd+Opt+H) is macOS "Hide Others" globally — only press APP hjkl while kitty/Obsidian is focused.
  * -------------------------------------------------------------------------------------------------------------------------------------
- * |       | GS-5  | G-7   | G-8   | G-9   | CS-Tab |----------------------------------| GAS-H | GAS-J | GAS-K | GAS-L |       |       |
+ * |       | GS-5  | G-7   | G-8   | G-9   | SC-Tab |----------------------------------| GAS-H | GAS-J | GAS-K | GAS-L |       |       |
  * | G-W   | GSC-4 | G-4   | G-5   | G-6   | C-Tab  |----------------------------------|  GA-H |  GA-J |  GA-K |  GA-L |       |       |
  * |       |       | G-1   | G-2   | G-3   | G-T    |       |-------------------|       |  G-D  |  GA-- |  GA-= |  GS-D |       |       |
  *                                 |       |       |       |       |---|       |       |       |       |
