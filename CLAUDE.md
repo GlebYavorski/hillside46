@@ -92,12 +92,17 @@ in Win order.
   The right thumb's tap is a one-shot Hyper (sticky: applies to the next keypress, or
   clears after 5s idle) for single-chord use without holding.
 
-  **Known issue:** the one-shot tap doesn't currently work on real hardware — the
-  modifier fails to apply to the next keypress (confirmed on-device). Hold works fine;
-  only the tap/sticky path is affected. Removing `quick-release` from `sk_hyper` (a
-  documented ZMK sticky-key/hold-tap interaction bug, issues #3279/#814) did not fix
-  it. Root cause not yet found; not currently a priority — see `sk_hyper`'s comment in
-  the keymap for details.
+  **Fixed (root cause found):** the one-shot tap used to do nothing on real hardware
+  because `sk_hyper` lacked `ignore-modifiers`. ZMK's stock `&sk` sets that flag; a
+  hand-rolled sticky-key node does not (devicetree booleans default to false). Without
+  it, the sticky key's own generated key-down slips past the "don't catch my own press"
+  filter in `behavior_sticky_key.c` — that filter compares `SELECT_MODS(param1)` with
+  `ev->implicit_modifiers`, but for `LC(LA(LGUI))` the keycode itself is a modifier, so
+  ZMK routes `LCTRL|LALT` into *explicit* modifiers and leaves the implicit set empty.
+  The sticky key therefore treats its own activation as "another key was pressed" and
+  releases the mods the instant the thumb comes up. `ignore-modifiers` (plus `lazy`, so
+  the mods are only held around the next keypress) fixes it — see `sk_hyper`'s comment
+  in the keymap. Not yet re-confirmed on hardware.
 
   AeroSpace has `start-at-login = false` in the shipped config — launch it manually
   (Spotlight → "AeroSpace") or flip the flag if you want auto-start. Without AeroSpace
