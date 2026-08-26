@@ -42,6 +42,21 @@ bindings — positions 19 and 22, the right home row's Ctrl/Cmd pair — because
 Cmd on the index finger and Win puts Ctrl there (see the HRM section below). Any other
 edit to NUM must be mirrored into NUM_MAC and vice versa; each layer's comment says so.
 
+### Physically unused keys
+
+**Key positions 38 and 45 — the outermost thumb of each half — do not exist for
+practical purposes.** Their keycaps have been removed from the board, so the switches
+cannot be pressed. Never assign a binding there; treat those two slots as absent
+hardware, not as free real estate.
+
+Thumb numbering, outer → inner: left `38 39 40 41`, right `42 43 44 45` (so 41 and 42
+are the two inner thumbs that carry Hyper, and 38 / 45 are the dead outer ones).
+
+`def_mac_layer` already has `&none` on both. `def_layer` (Win/Lin) still carries
+`&lt_t WM BSPC` on 38 and `&mt LALT DEL` on 45 — both **unreachable**; they predate the
+keycap removal. Consequences on the Win base: WM is reachable only via the two inner
+RETURN thumbs, and Delete currently has no key at all. Not yet resolved.
+
 ## Target OSes (Win/Lin ↔ macOS)
 
 The config keeps two parallel bases:

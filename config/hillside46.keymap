@@ -121,6 +121,11 @@
                 // the timeout path: hold the mod alone past tapping-term, then press.
                 // Positions (Hillside46, 46 keys, numbered by keymap order from 0):
                 //   left  hand: 0-5, 12-17, 24-30   right hand: 6-11, 18-23, 31-37   thumbs: 38-45
+                //   thumbs, outer -> inner:  left 38 39 40 41 | right 42 43 44 45 (45 is outermost)
+                // HARDWARE: positions 38 and 45 - the OUTERMOST thumb of each half - are
+                // physically unused. Their keycaps have been removed from the board, so they
+                // cannot be pressed at all. Never assign anything there; treat them as if the
+                // switch did not exist. See "Physically unused keys" in CLAUDE.md.
                 hml: homerow_mod_left {
                         compatible = "zmk,behavior-hold-tap";
                         label = "HRM_LEFT";
@@ -279,7 +284,9 @@
  * hotkey (AeroSpace/OmniWM) while held. Right thumb tap = one-shot Hyper (sticky, 5s idle timeout).
  * The one-shot was broken until sk_hyper gained `ignore-modifiers` - see sk_hyper's comment
  * below for the ZMK-internals reason.
- * The outermost thumbs (leftmost/rightmost) are fully disabled (&none).
+ * The outermost thumbs (pos 38 and 45) are &none because they are PHYSICALLY UNUSED -
+ * their keycaps have been removed from the board and cannot be pressed. Do not put
+ * anything there.
  * HRM mac (Cmd<->Ctrl swapped vs Win): A=Ctrl S=Opt D=Shift F=Cmd  /  J=Cmd K=Shift L=Opt ;=Ctrl  (Cmd on index, Ctrl on pinky)
  * -------------------------------------------------------------------------------------------------------------------------------------
  * |  `    |   Q   |   W   |   E   |   R   |   T   |-----------------------------------|   Y   |   U   |   I   |   O   |   P   |  [/]  |
@@ -297,6 +304,11 @@
 
                 def_layer {
 /* QWERTY Win/Lin (layer 1, must be reached via ADJ) - HRM on ASDF/JKL; | AC-Tab=Alt+Ctrl+Tab | [/]=tap:[, hold:] | thumb: hold=layer, tap=key
+ * STALE: the two outer thumb slots below (pos 38 = WM/BSPC, pos 45 = A/DEL) are
+ * UNREACHABLE - those keycaps have been removed from the board (see the HARDWARE note
+ * on hml above). They predate that change and were never cleaned up, so on the Win base
+ * WM is reachable only through the two inner RETURN thumbs, and Delete has no key at
+ * all. Left as-is pending a decision on where Delete should move.
  * -------------------------------------------------------------------------------------------------------------------------------------
  * |  `    |   Q   |   W   |   E   |   R   |   T   |-----------------------------------|   Y   |   U   |   I   |   O   |   P   |  [/]  |
  * |AC-Tab |   A   |   S   |   D   |   F   |   G   |-----------------------------------|   H   |   J   |   K   |   L   |   ;   |   '   |
