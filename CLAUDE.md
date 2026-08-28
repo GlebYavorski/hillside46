@@ -239,3 +239,30 @@ files never need a build at all — don't even ask.
   - for alt+win+h the diagram should be GA-h
   - for shift+ctrl+gui+alt+right it will be GASC-->
   - for alt+5: A-5
+
+### Never cite a bare key position
+
+The user does not memorise key-position numbers. **Whenever a reply mentions one or
+more key positions, it MUST include an ASCII map of the board with those positions
+marked** — no exceptions, not even for a single position, not even if the same map was
+printed earlier in the conversation.
+
+Use this template (positions on top, the DEF_MAC legend underneath each slot), and
+replace the slots under discussion with a marker such as `**` or the proposed binding:
+
+```
+       0    1    2    3    4    5                          6    7    8    9   10   11
+       `    Q    W    E    R    T                          Y    U    I    O    P    [
+      12   13   14   15   16   17                         18   19   20   21   22   23
+    G-Tab   A    S    D    F    G                          H    J    K    L    ;    '
+      24   25   26   27   28   29   30              31   32   33   34   35   36   37
+       -    Z    X    C    V    B   ESC           RA/INS   N    M    ,    .    /    \
+                         38   39   40   41      42   43   44   45
+                        (--) TAB  SPC  ENT     HYP   CW  BSPC (--)
+```
+
+`38` and `45` are the physically removed outer thumbs — always draw them as `(--)`.
+
+When the discussion is about the Russian ЙЦУКЕН layer, add the Cyrillic letter next to
+the Latin one for the keys under discussion (e.g. `[` = Х, `]` = Ъ, `;` = Ж, `'` = Э),
+since the user's motivation is usually the Russian legend, not the Latin one.
