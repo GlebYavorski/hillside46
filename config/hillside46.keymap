@@ -304,14 +304,18 @@
  * their keycaps have been removed from the board and cannot be pressed. Do not put
  * anything there.
  * HRM mac (Cmd<->Ctrl swapped vs Win): A=Ctrl S=Opt D=Shift F=Cmd  /  J=Cmd K=Shift L=Opt ;=Ctrl  (Cmd on index, Ctrl on pinky)
+ * `[` (pos 11) is a plain &kp. It used to be `&mt RBKT LBKT`, which put `]` on a pinky
+ * HOLD and also risked emitting `]` instead of `[` mid-burst - the generic &mt has no
+ * require-prior-idle-ms, unlike hml/hmr/lt_t. `]` now lives on the P+[ combo
+ * (positions 10 11, see combos.dtsi). RU YCUKEN legend: [ = X, ] = hard sign.
  * -------------------------------------------------------------------------------------------------------------------------------------
- * |  `    |   Q   |   W   |   E   |   R   |   T   |-----------------------------------|   Y   |   U   |   I   |   O   |   P   |  [/]  |
+ * |  `    |   Q   |   W   |   E   |   R   |   T   |-----------------------------------|   Y   |   U   |   I   |   O   |   P   |   [   |
  * | G-Tab |   A   |   S   |   D   |   F   |   G   |-----------------------------------|   H   |   J   |   K   |   L   |   ;   |   '   |
  * |   -   |   Z   |   X   |   C   |   V   |   B   |  ESC  |-------------------|RA/INS |   N   |   M   |   ,   |   .   |   /   |   \   |
  *                                 |       |APP/TAB|NUM/SPC|HYP/ENT|HYP/OSH|NAV/CW |APP/BSP|       |
  */
                         bindings = <
-&kp GRAVE      &kp Q &kp W &kp E &kp R &kp T &kp Y                                                    &kp U   &kp I  &kp O   &kp P    &mt RBKT LBKT
+&kp GRAVE      &kp Q &kp W &kp E &kp R &kp T &kp Y                                                    &kp U   &kp I  &kp O   &kp P    &kp LBKT
 &kp LG(TAB)    &hml LCTRL A &hml LALT S &hml LSHIFT D &hml LGUI F  &kp G                              &kp H  &hmr RGUI J &hmr RSHIFT K &hmr LALT L &hmr RCTRL SEMI &kp SQT
 &kp MINUS      &kp Z &kp X &kp C &kp V &kp B   &kp ESC                               &mt RALT INSERT  &kp N  &kp M  &kp COMMA    &kp DOT &kp FSLH &kp BSLH
                                 XXX &lt_t APP TAB &lt_t NUM_MAC SPACE &mt HYPER_HOLD RETURN     &hyper_ht HYPER_HOLD HYPER_HOLD &cw_ht NAV_MAC 0 &app_bs_ht APP 0 XXX
@@ -319,20 +323,20 @@
                 };
 
                 def_layer {
-/* QWERTY Win/Lin (layer 1, must be reached via ADJ) - HRM on ASDF/JKL; | AC-Tab=Alt+Ctrl+Tab | [/]=tap:[, hold:] | thumb: hold=layer, tap=key
+/* QWERTY Win/Lin (layer 1, must be reached via ADJ) - HRM on ASDF/JKL; | AC-Tab=Alt+Ctrl+Tab | thumb: hold=layer, tap=key
  * STALE: the two outer thumb slots below (pos 38 = WM/BSPC, pos 45 = A/DEL) are
  * UNREACHABLE - those keycaps have been removed from the board (see the HARDWARE note
  * on hml above). They predate that change and were never cleaned up, so on the Win base
  * WM is reachable only through the two inner RETURN thumbs, and Delete has no key at
  * all. Left as-is pending a decision on where Delete should move.
  * -------------------------------------------------------------------------------------------------------------------------------------
- * |  `    |   Q   |   W   |   E   |   R   |   T   |-----------------------------------|   Y   |   U   |   I   |   O   |   P   |  [/]  |
+ * |  `    |   Q   |   W   |   E   |   R   |   T   |-----------------------------------|   Y   |   U   |   I   |   O   |   P   |   [   |
  * |AC-Tab |   A   |   S   |   D   |   F   |   G   |-----------------------------------|   H   |   J   |   K   |   L   |   ;   |   '   |
  * |   -   |   Z   |   X   |   C   |   V   |   B   |  ESC  |-------------------|  INS  |   N   |   M   |   ,   |   .   |   /   |   \   |
  *                                 |WM/BSPC|FZ/TAB |NUM/SPC|WM/ENT |WM/ENT |NAV/CW |FZ/BSPC| A/DEL |
  */
                         bindings = <
-&kp GRAVE      &kp Q &kp W &kp E &kp R &kp T &kp Y                                                    &kp U   &kp I  &kp O   &kp P    &mt RBKT LBKT
+&kp GRAVE      &kp Q &kp W &kp E &kp R &kp T &kp Y                                                    &kp U   &kp I  &kp O   &kp P    &kp LBKT
 &kp LA(LC(TAB)) &hml LGUI A &hml LALT S &hml LSHIFT D &hml LCTRL F  &kp G                             &kp H  &hmr RCTRL J &hmr RSHIFT K &hmr LALT L &hmr RGUI SEMI &kp SQT
 &kp MINUS      &kp Z &kp X &kp C &kp V &kp B   &kp ESC                                   &kp INSERT  &kp N  &kp M  &kp COMMA    &kp DOT &kp FSLH &kp BSLH
                                 &lt_t WM BSPC &lt_t FZ TAB &lt_t NUM SPACE &lt_t WM RETURN     &lt_t WM RETURN &cw_ht NAV 0 &lt_t FZ BSPC &mt LALT DEL

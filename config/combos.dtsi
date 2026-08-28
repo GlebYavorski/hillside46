@@ -58,6 +58,13 @@
             COMBO(lpar,       &kp LPAR,       21 35,     DEF DEF_MAC,      COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
             COMBO(rpar,       &kp RPAR,       22 36,     DEF DEF_MAC,      COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
 
+            /* Brackets - ] lives only here (pos 11 is a plain `[`).
+             * 10+11 = P + [ : both under the right pinky (same-finger squish), so
+             * COMBO_TERM_SLOW - a squish never lands as cleanly as a two-finger roll.
+             * Safe from misfires: neither "p[" (en) nor the YCUKEN pair 3-X (ru) is a
+             * bigram. RU legend: [ = X, ] = hard sign. */
+            COMBO(rbkt,       &kp RBKT,       10 11,     DEF DEF_MAC,      COMBO_TERM_SLOW, COMBO_QUICK_TAP_MS)
+
             /* F-keys (top + home row vertical combos) */
             COMBO(F1,         &kp F1,         1 13,      DEF DEF_MAC,      COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
             COMBO(F2,         &kp F2,         2 14,      DEF DEF_MAC,      COMBO_TERM_FAST, COMBO_QUICK_TAP_MS)
