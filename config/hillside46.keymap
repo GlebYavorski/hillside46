@@ -14,10 +14,11 @@
 // bases (DEF_MAC, DEF) are lowest so momentary/overlay layers stack above them;
 // ADJ is highest so it shows above NAV_MAC when reached via NUM_MAC+NAV_MAC.
 // DEF_MAC is layer 0 so the keyboard boots into mac mode by default.
-// NUM (Win/Lin) and NUM_MAC are full copies of each other; they differ ONLY in the
-// right-hand home-row mod order (index = Ctrl on Win, index = Cmd on mac), matching
-// the split already used by DEF/DEF_MAC and NAV/NAV_MAC. Any other edit to one MUST
-// be mirrored into the other.
+// NUM (Win/Lin) and NUM_MAC are now BYTE-IDENTICAL. Their only difference used to be the
+// right-hand home-row mod order (index = Ctrl on Win, index = Cmd on mac); those positions are
+// &trans since the symbol cleanup, so the OS-correct order arrives from the base layer instead.
+// They are kept as two layers only until the merge lands as its own change. Until then, any
+// edit to one MUST be mirrored into the other.
 #define DEF_MAC 0
 #define DEF 1
 #define NUM 2
@@ -344,34 +345,53 @@
                 };
 
                 num_layer {
-/* NUM (Win/Lin, reached from DEF) - left: numpad 789/456/123 | right: symbols ^&*() and F6-F11 | -/ and +* are tap-dance
- * HRM right home row is in Win order (GASC): index = Ctrl. The mac copy is num_mac_layer below.
+/* NUM (Win/Lin, reached from DEF) - numpad only, entirely on the left half: 789/456/123
+ * Symbols and F-keys are NOT here any more: every special symbol and every F-key has exactly one
+ * definition site, and that site is combos.dtsi. What used to sit on this layer (^&*() and F6-F12)
+ * was a verbatim copy of those combos.
+ * Consequence worth knowing: ZMK matches a combo against the HIGHEST active layer
+ * (zmk_keymap_highest_layer_active(), keymap.c), so while this layer is held the symbol combos are
+ * gated off - a `(` in the middle of a number needs the thumb released first. Accepted trade-off.
+ * `=` `:` `- /` `+ *` `KP.` stay: that is numpad math, not "special symbols". `-` on pos 23 was
+ * dropped (a plain duplicate of the base `-` on pos 24 and of td1's KP_MINUS).
+ * Right home row (pos 19-22) is &trans ON PURPOSE - the base layer's home-row mods come through it
+ * in the order matching the active OS, which is what still makes Cmd/Ctrl/Alt/Shift + digit work
+ * from here. Pos 18 and 23 are &none: no mod lives there.
+ * NOTE: with the HRM order gone this layer is byte-identical to num_mac_layer (that order was
+ * their only difference). Merging them is a separate follow-up change.
  * -------------------------------------------------------------------------------------------------------------------------------------
- * |       |   =   |   7   |   8   |   9   |  - /  |-----------------------------------|  F6   |  F7   |  F8   |  F9   |  F10  |  F11  |
- * | ENTER |   :   |   4   |   5   |   6   |  + *  |-----------------------------------|   ^   |   &   |   *   |   (   |   )   |   -   |
- * | CALC  |  KP.  |   1   |   2   |   3   |   0   |       |-------------------|       |       |  KP7  |  KP8  |  KP9  |  KP0  |       |
- *                                 |       |       |       |       |---|       |       |       |  F12  |
+ * |       |   =   |   7   |   8   |   9   |  - /  |-----------------------------------|       |       |       |       |       |       |
+ * | ENTER |   :   |   4   |   5   |   6   |  + *  |-----------------------------------|       | trans | trans | trans | trans |       |
+ * | CALC  |  KP.  |   1   |   2   |   3   |   0   |       |-------------------|       |       |       |       |       |       |       |
+ *                                 |       |       |       |       |---|       |       |       |       |
  */
                         bindings = <
-XXX             &kp EQUAL  &kp N7 &kp N8 &kp N9 &td1 &kp F6                 &kp F7   &kp F8   &kp F9   &kp F10  &kp F11
-&kp ENTER        &kp COLON  &kp N4 &kp N5 &kp N6 &td2                        &kp CARET   &hmr RCTRL AMPS &hmr RSHIFT STAR &hmr LALT LPAR &hmr RGUI RPAR &kp MINUS
-&kp C_AL_CALC   &kp KP_DOT &kp N1 &kp N2 &kp N3 &kp N0 XXX              ___ ___    &kp KP_N7   &kp KP_N8   &kp KP_N9   &kp KP_N0   XXX
-                                                ___ ___ ___ ___     ___ ___ ___ &kp F12 
+XXX             &kp EQUAL  &kp N7 &kp N8 &kp N9 &td1 XXX                     XXX      XXX      XXX      XXX      XXX
+&kp ENTER        &kp COLON  &kp N4 &kp N5 &kp N6 &td2                        XXX         ___             ___              ___            ___            XXX
+&kp C_AL_CALC   &kp KP_DOT &kp N1 &kp N2 &kp N3 &kp N0 XXX              ___ ___    XXX         XXX         XXX         XXX         XXX
+                                                ___ ___ ___ ___     ___ ___ ___ ___
                         >;
                 };
 
                 nav_layer {
-/* NAV - left: F1-F5 top, symbols !@#$% home row, KP1-5 bottom | right: nav arrows, C=Ctrl+nav, volume
+/* NAV (Win/Lin) - navigation, entirely on the right half | C = Ctrl+nav (word / page jumps), volume
+ * The left half is empty by design: !@#$% and F1-F5 used to be a verbatim copy of the combos in
+ * combos.dtsi, and KP1-KP5 duplicated the digits on NUM. All three groups were removed, along with
+ * the orphan `KP=` on pos 12.
+ * Left home row (pos 13-16) is &trans ON PURPOSE - the base layer's home-row mods come through it
+ * in the OS-correct order, and that is what still gives Shift/Ctrl/Alt/Gui + arrow (text selection)
+ * from this layer. Pos 12 and 17 are &none: no mod lives there.
+ * See num_layer's comment for the combo-gating trade-off that comes with holding a layer.
  * -------------------------------------------------------------------------------------------------------------------------------------
- * |       |  F1   |  F2   |  F3   |  F4   |  F5   |-----------------------------------| HOME  | PG_DN | PG_UP |  END  |       | VOL+  |
- * |  KP=  |   !   |   @   |   #   |   $   |   %   |-----------------------------------| LEFT  | DOWN  |  UP   | RIGHT | RALT  |PL/NXT |
- * |       |  KP1  |  KP2  |  KP3  |  KP4  |  KP5  |       |-------------------|       |  C-<- | C-PgD | C-PgU |  C->  |       | VOL-  |
+ * |       |       |       |       |       |       |-----------------------------------| HOME  | PG_DN | PG_UP |  END  |       | VOL+  |
+ * |       | trans | trans | trans | trans |       |-----------------------------------| LEFT  | DOWN  |  UP   | RIGHT | RALT  |PL/NXT |
+ * |       |       |       |       |       |       |       |-------------------|       |  C-<- | C-PgD | C-PgU |  C->  |       | VOL-  |
  *                                 |       |       |       |       |---|       |       |       |       |
  */
                         bindings = <
-XXX            &kp F1      &kp F2 &kp F3   &kp F4      &kp F5                                   &kp HOME      &kp PG_DN        &kp PG_UP       &kp END       XXX             &kp C_VOL_UP
-&kp KP_EQUAL   &hml LGUI EXCL  &hml LALT AT &hml LSHIFT HASH &hml LCTRL DLLR  &kp PRCNT          &kp LEFT      &kp DOWN     &kp UP          &kp RIGHT       &kp RALT        &td0
-XXX         &kp KP_N1   &kp KP_N2 &kp KP_N3 &kp KP_N4 &kp KP_N5  ___                        ___  &kp LC(LEFT)  &kp LC(PG_DN)    &kp LC(PG_UP)   &kp LC(RIGHT)   XXX             &kp C_VOL_DN
+XXX            XXX         XXX    XXX      XXX         XXX                                      &kp HOME      &kp PG_DN        &kp PG_UP       &kp END       XXX             &kp C_VOL_UP
+XXX            ___             ___          ___              ___              XXX                &kp LEFT      &kp DOWN     &kp UP          &kp RIGHT       &kp RALT        &td0
+XXX         XXX         XXX       XXX       XXX       XXX        ___                        ___  &kp LC(LEFT)  &kp LC(PG_DN)    &kp LC(PG_UP)   &kp LC(RIGHT)   XXX             &kp C_VOL_DN
                                                         ___ ___ ___ ___                 ___ ___ ___ ___
                         >;
                 };
@@ -409,19 +429,23 @@ XXX     XXX &kp LC(F1) &kp LC(F2) &kp LC(F3) &kp LG(N0) ___                     
                 };
 
                 nav_mac_layer {
-/* NAV macOS - copy of NAV | bottom-right: A-<-/A-> word nav (Option), GA-tab = Cmd+Opt+arrow tab switch (universal: Firefox/Chrome/VSCode native, Ghostty via config)
- * top-right: G-<-/G-> = Cmd+arrow line start/end (HOME/END are unreliable on mac: scroll-to-document in Cocoa apps, line nav elsewhere)
+/* NAV macOS - navigation, entirely on the right half. Mirrors nav_layer; the right half differs:
+ * bottom-right A-<-/A-> = word nav (Option), GA-<-/GA-> = Cmd+Opt+arrow tab switch (universal:
+ * Firefox/Chrome/VSCode native, Ghostty via config)
+ * top-right: G-<-/G-> = Cmd+arrow line start/end (HOME/END are unreliable on mac: scroll-to-document
+ * in Cocoa apps, line nav elsewhere)
+ * The left half was cleared the same way as on nav_layer (symbols -> combos only, KP1-KP5 and KP=
+ * dropped); pos 13-16 are &trans so the mac home-row mod order arrives from the base layer.
  * -------------------------------------------------------------------------------------------------------------------------------------
- * |       |  F1   |  F2   |  F3   |  F4   |  F5   |-----------------------------------| G-<-  | PG_DN | PG_UP | G->   |       | VOL+  |
- * |  KP=  |   !   |   @   |   #   |   $   |   %   |-----------------------------------| LEFT  | DOWN  |  UP   | RIGHT | RALT  |PL/NXT |
- * |       |  KP1  |  KP2  |  KP3  |  KP4  |  KP5  |       |-------------------|       |  A-<- | GA->  | GA-<- |  A->  |       | VOL-  |
+ * |       |       |       |       |       |       |-----------------------------------| G-<-  | PG_DN | PG_UP | G->   |       | VOL+  |
+ * |       | trans | trans | trans | trans |       |-----------------------------------| LEFT  | DOWN  |  UP   | RIGHT | RALT  |PL/NXT |
+ * |       |       |       |       |       |       |       |-------------------|       |  A-<- | GA->  | GA-<- |  A->  |       | VOL-  |
  *                                 |       |       |       |       |---|       |       |       |       |
- * HRM left home row mac (Cmd<->Ctrl swapped vs Win): pos A/!=Ctrl, F/$=Cmd
  */
                         bindings = <
-XXX            &kp F1      &kp F2 &kp F3   &kp F4      &kp F5                                   &kp LG(LEFT)  &kp PG_DN        &kp PG_UP       &kp LG(RIGHT) XXX             &kp C_VOL_UP
-&kp KP_EQUAL   &hml LCTRL EXCL  &hml LALT AT &hml LSHIFT HASH &hml LGUI DLLR  &kp PRCNT          &kp LEFT      &kp DOWN     &kp UP          &kp RIGHT       &kp RALT        &td0
-XXX         &kp KP_N1   &kp KP_N2 &kp KP_N3 &kp KP_N4 &kp KP_N5  ___                        ___  &kp LA(LEFT)  &kp LG(LA(RIGHT)) &kp LG(LA(LEFT)) &kp LA(RIGHT) XXX             &kp C_VOL_DN
+XXX            XXX         XXX    XXX      XXX         XXX                                      &kp LG(LEFT)  &kp PG_DN        &kp PG_UP       &kp LG(RIGHT) XXX             &kp C_VOL_UP
+XXX            ___             ___          ___              ___              XXX                &kp LEFT      &kp DOWN     &kp UP          &kp RIGHT       &kp RALT        &td0
+XXX         XXX         XXX       XXX       XXX       XXX        ___                        ___  &kp LA(LEFT)  &kp LG(LA(RIGHT)) &kp LG(LA(LEFT)) &kp LA(RIGHT) XXX             &kp C_VOL_DN
                                                         ___ ___ ___ ___                 ___ ___ ___ ___
                         >;
                 };
@@ -451,23 +475,23 @@ XXX          XXX                  &kp LG(N1)  &kp LG(N2)  &kp LG(N3)  &kp LG(T) 
                 };
 
                 num_mac_layer {
-/* NUM macOS (reached from DEF_MAC) - full copy of NUM; the ONLY difference is the HRM
- * order on the right home row: mac puts Cmd on the index and Ctrl on the pinky
- * (CASG), so positions 19 and 22 swap RGUI <-> RCTRL. Keep every other binding in
- * sync with num_layer above.
- * left: numpad 789/456/123 | right: symbols ^&*() and F6-F11 | -/ and +* are tap-dance
+/* NUM macOS (reached from DEF_MAC) - numpad only, entirely on the left half: 789/456/123
+ * Now BYTE-IDENTICAL to num_layer above: the right home row used to be the one place they differed
+ * (mac puts Cmd on the index, Win puts Ctrl there), and it is &trans now, so the OS-correct order
+ * arrives from the base layer by itself. The two layers are kept separate only until the merge
+ * lands as its own change. Until then, any edit here MUST be mirrored into num_layer.
+ * See num_layer's comment for why symbols and F-keys are gone and what that costs.
  * -------------------------------------------------------------------------------------------------------------------------------------
- * |       |   =   |   7   |   8   |   9   |  - /  |-----------------------------------|  F6   |  F7   |  F8   |  F9   |  F10  |  F11  |
- * | ENTER |   :   |   4   |   5   |   6   |  + *  |-----------------------------------|   ^   |   &   |   *   |   (   |   )   |   -   |
- * | CALC  |  KP.  |   1   |   2   |   3   |   0   |       |-------------------|       |       |  KP7  |  KP8  |  KP9  |  KP0  |       |
- *                                 |       |       |       |       |---|       |       |       |  F12  |
- * HRM right home row mac: &=Cmd  *=Shift  (=Opt  )=Ctrl
+ * |       |   =   |   7   |   8   |   9   |  - /  |-----------------------------------|       |       |       |       |       |       |
+ * | ENTER |   :   |   4   |   5   |   6   |  + *  |-----------------------------------|       | trans | trans | trans | trans |       |
+ * | CALC  |  KP.  |   1   |   2   |   3   |   0   |       |-------------------|       |       |       |       |       |       |       |
+ *                                 |       |       |       |       |---|       |       |       |       |
  */
                         bindings = <
-XXX             &kp EQUAL  &kp N7 &kp N8 &kp N9 &td1 &kp F6                 &kp F7   &kp F8   &kp F9   &kp F10  &kp F11
-&kp ENTER        &kp COLON  &kp N4 &kp N5 &kp N6 &td2                        &kp CARET   &hmr RGUI AMPS &hmr RSHIFT STAR &hmr LALT LPAR &hmr RCTRL RPAR &kp MINUS
-&kp C_AL_CALC   &kp KP_DOT &kp N1 &kp N2 &kp N3 &kp N0 XXX              ___ ___    &kp KP_N7   &kp KP_N8   &kp KP_N9   &kp KP_N0   XXX
-                                                ___ ___ ___ ___     ___ ___ ___ &kp F12 
+XXX             &kp EQUAL  &kp N7 &kp N8 &kp N9 &td1 XXX                     XXX      XXX      XXX      XXX      XXX
+&kp ENTER        &kp COLON  &kp N4 &kp N5 &kp N6 &td2                        XXX         ___             ___              ___            ___            XXX
+&kp C_AL_CALC   &kp KP_DOT &kp N1 &kp N2 &kp N3 &kp N0 XXX              ___ ___    XXX         XXX         XXX         XXX         XXX
+                                                ___ ___ ___ ___     ___ ___ ___ ___
                         >;
                 };
 
