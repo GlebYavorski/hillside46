@@ -23,30 +23,29 @@ by default; Win/Lin requires an ADJ switch.
 |---|---------|---------------------------------------------------|
 | 0 | DEF_MAC | QWERTY base for macOS (boot default)              |
 | 1 | DEF     | QWERTY base (Win/Lin), homerow mods               |
-| 2 | NUM     | Numpad digits (Win/Lin) — left half only          |
+| 2 | NUM     | Numpad digits — shared by both bases, left half   |
 | 3 | NAV     | Navigation, media (Win/Lin) — right half only     |
 | 4 | WM      | Window management (Win/Lin: Win+1..9, Win+arrows) |
 | 5 | FZ      | FancyZones, snap, virtual desktops (Win)          |
 | 6 | NAV_MAC | Navigation for macOS — right half only            |
 | 7 | APP     | App tabs + splits (mac; 2nd-from-edge left thumb) |
-| 8 | NUM_MAC | Numpad digits (macOS) — identical to NUM          |
-| 9 | ADJ     | Bluetooth, system, OS switching                   |
+| 8 | ADJ     | Bluetooth, system, OS switching                   |
 
 ADJ is activated via a conditional_layer when the NUM and NAV keys are held
 simultaneously — two tri_layer entries, one per base: `<NUM NAV>` and
-`<NUM_MAC NAV_MAC>` → `ADJ`. `if-layers`/`then-layer` use the `#define` layer names,
+`<NUM NAV_MAC>` → `ADJ`. `if-layers`/`then-layer` use the `#define` layer names,
 not raw indices, so inserting a layer no longer means hand-editing them.
 
-NUM and NUM_MAC are now **byte-identical**. Their only difference used to be positions 19
-and 22, the right home row's Ctrl/Cmd pair (mac puts Cmd on the index finger, Win puts Ctrl
-there — see the HRM section below); those slots are `&trans` since the symbol cleanup, so the
-OS-correct mod order arrives from the base layer instead. Merging the two into one layer is a
-pending follow-up. Until it lands, any edit to NUM must be mirrored into NUM_MAC and vice versa.
+**NUM is shared by both bases** — there is no NUM_MAC any more. It used to exist purely
+because the right home row carried the OS-specific Ctrl/Cmd pair on positions 19 and 22;
+those slots are `&trans` since the symbol cleanup, so the correct mod order arrives from
+whichever base is active. NAV still needs its mac twin (NAV_MAC): their right halves
+genuinely differ (Home/End vs Cmd+arrow, Ctrl+arrow vs Option+arrow).
 
 ### Symbols and F-keys live in combos only
 
 Every special symbol (`!@#$%^&*()` `]`) and every F-key (F1-F12) has exactly **one**
-definition site: `config/combos.dtsi`. NUM/NUM_MAC and NAV/NAV_MAC used to carry verbatim
+definition site: `config/combos.dtsi`. NUM (then still NUM/NUM_MAC) and NAV/NAV_MAC carried verbatim
 copies of them; those copies are gone. Never re-add a symbol or an F-key to a layer — change
 the combo instead.
 
@@ -63,7 +62,8 @@ the digit pairs 4/1, 5/2, 6/3, so digit rolls would misfire as `@#$`.
 After the cleanup NUM occupies only the left half of the board and NAV only the right half.
 Merging them into one layer was considered and rejected for now: it would break the `<NUM NAV>`
 conditional that reaches ADJ, put digits where NAV's left home-row mods live, and — since NAV
-and NAV_MAC genuinely differ — duplicate the numpad across two OS variants again.
+and NAV_MAC genuinely differ — duplicate the numpad across two OS variants again, undoing the
+NUM_MAC merge.
 
 ### Physically unused keys
 
@@ -83,8 +83,9 @@ RETURN thumbs, and Delete currently has no key at all. Not yet resolved.
 ## Target OSes (Win/Lin ↔ macOS)
 
 The config keeps two parallel bases:
-- **macOS** (default on boot, BT profile 0): layers DEF_MAC / NAV_MAC / NUM_MAC / APP
-- **Win/Lin** (BT profile 1): layers DEF / NAV / NUM / WM / FZ
+- **macOS** (default on boot, BT profile 0): layers DEF_MAC / NAV_MAC / APP
+- **Win/Lin** (BT profile 1): layers DEF / NAV / WM / FZ
+- **shared by both**: NUM (numpad) and ADJ
 
 Switching is done with keys in the ADJ layer (top row of the left half, above BT_SEL 0/1):
 - above BT_SEL 0 → `&to DEF_MAC` (mac base)
@@ -104,8 +105,9 @@ hotkey modifier is used — it goes on the strongest finger, the index):
 
 So on mac, Cmd and Ctrl are swapped relative to Win: Cmd moves off the pinky onto
 the index (A=Ctrl, S=Opt, D=Shift, F=Cmd, mirrored on the right). Shift and Alt stay
-on the same fingers in both OSes. The number layer follows the same split: NUM keeps
-the Win order (`&`=Ctrl, `)`=Gui) and NUM_MAC the mac order (`&`=Cmd, `)`=Ctrl).
+on the same fingers in both OSes. NUM and NAV/NAV_MAC do **not** repeat this split: their
+home-row slots are `&trans`, so the mods fall through to whichever base is active and the
+order is correct for free. That is what let NUM_MAC be deleted entirely.
 
 ### Known limitations of mac mode
 - On boot/battery swap the keyboard always starts on layer 0 (DEF_MAC, mac base) —

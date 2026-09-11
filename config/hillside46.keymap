@@ -12,13 +12,13 @@
 
 // layer shortcuts, must match order in which they are defined below
 // bases (DEF_MAC, DEF) are lowest so momentary/overlay layers stack above them;
-// ADJ is highest so it shows above NAV_MAC when reached via NUM_MAC+NAV_MAC.
+// ADJ is highest so it shows above NAV_MAC when reached via NUM+NAV_MAC.
 // DEF_MAC is layer 0 so the keyboard boots into mac mode by default.
-// NUM (Win/Lin) and NUM_MAC are now BYTE-IDENTICAL. Their only difference used to be the
-// right-hand home-row mod order (index = Ctrl on Win, index = Cmd on mac); those positions are
-// &trans since the symbol cleanup, so the OS-correct order arrives from the base layer instead.
-// They are kept as two layers only until the merge lands as its own change. Until then, any
-// edit to one MUST be mirrored into the other.
+// NUM is shared by BOTH bases. It used to have a mac twin (NUM_MAC) whose only difference was
+// the right-hand home-row mod order; since the symbol cleanup those slots are &trans and the
+// OS-correct order arrives from the base layer, so the twin was deleted. NAV still needs a mac
+// twin (NAV_MAC) because its right half genuinely differs - Home/End vs Cmd+arrow, Ctrl+arrow
+// vs Option+arrow.
 #define DEF_MAC 0
 #define DEF 1
 #define NUM 2
@@ -27,8 +27,7 @@
 #define FZ 5
 #define NAV_MAC 6
 #define APP 7
-#define NUM_MAC 8
-#define ADJ 9
+#define ADJ 8
 
 /* Windows legacy clipboard encodings, so the combos also work in terminals where
  * Ctrl+C/V are taken. Undo/Redo have no such second encoding and are one HRM chord
@@ -78,9 +77,9 @@
                 if-layers = <NUM NAV>;
                 then-layer = <ADJ>;
             };
-            // mac: NUM_MAC + NAV_MAC reaches ADJ
+            // mac: NUM + NAV_MAC reaches ADJ (NUM is shared by both bases)
             tri_layer_mac {
-                if-layers = <NUM_MAC NAV_MAC>;
+                if-layers = <NUM NAV_MAC>;
                 then-layer = <ADJ>;
             };
         };
@@ -295,7 +294,7 @@
 
                 def_mac_layer {
 /* QWERTY macOS (boot default, layer 0) | G-Tab=Cmd+Tab (switch to last app; tap toggles 2 most recent)
- * thumbs left: (unused, leftmost) · APP/TAB (app tabs+splits) · NUM_MAC · Hyper hold/Enter tap
+ * thumbs left: (unused, leftmost) · APP/TAB (app tabs+splits) · NUM · Hyper hold/Enter tap
  * thumbs right: Hyper hold/one-shot tap (5s sticky) · NAV_MAC · APP/BSPC (app, mirror; Shift+tap = Delete) · (unused, rightmost)
  * Inner thumbs hold = raw Hyper (Ctrl+Opt+Cmd) modifier, no layer switch - press any Hyper
  * hotkey (AeroSpace/OmniWM) while held. Right thumb tap = one-shot Hyper (sticky, 5s idle timeout).
@@ -319,7 +318,7 @@
 &kp GRAVE      &kp Q &kp W &kp E &kp R &kp T &kp Y                                                    &kp U   &kp I  &kp O   &kp P    &kp LBKT
 &kp LG(TAB)    &hml LCTRL A &hml LALT S &hml LSHIFT D &hml LGUI F  &kp G                              &kp H  &hmr RGUI J &hmr RSHIFT K &hmr LALT L &hmr RCTRL SEMI &kp SQT
 &kp MINUS      &kp Z &kp X &kp C &kp V &kp B   &kp ESC                               &mt RALT INSERT  &kp N  &kp M  &kp COMMA    &kp DOT &kp FSLH &kp BSLH
-                                XXX &lt_t APP TAB &lt_t NUM_MAC SPACE &mt HYPER_HOLD RETURN     &hyper_ht HYPER_HOLD HYPER_HOLD &cw_ht NAV_MAC 0 &app_bs_ht APP 0 XXX
+                                XXX &lt_t APP TAB &lt_t NUM SPACE &mt HYPER_HOLD RETURN     &hyper_ht HYPER_HOLD HYPER_HOLD &cw_ht NAV_MAC 0 &app_bs_ht APP 0 XXX
                         >;
                 };
 
@@ -345,7 +344,7 @@
                 };
 
                 num_layer {
-/* NUM (Win/Lin, reached from DEF) - numpad only, entirely on the left half: 789/456/123
+/* NUM (shared by DEF and DEF_MAC) - numpad only, entirely on the left half: 789/456/123
  * Symbols and F-keys are NOT here any more: every special symbol and every F-key has exactly one
  * definition site, and that site is combos.dtsi. What used to sit on this layer (^&*() and F6-F12)
  * was a verbatim copy of those combos.
@@ -357,8 +356,9 @@
  * Right home row (pos 19-22) is &trans ON PURPOSE - the base layer's home-row mods come through it
  * in the order matching the active OS, which is what still makes Cmd/Ctrl/Alt/Shift + digit work
  * from here. Pos 18 and 23 are &none: no mod lives there.
- * NOTE: with the HRM order gone this layer is byte-identical to num_mac_layer (that order was
- * their only difference). Merging them is a separate follow-up change.
+ * SHARED BY BOTH BASES: reached from DEF via the Win thumb and from DEF_MAC via the mac thumb.
+ * There used to be a num_mac_layer twin whose only difference was the right-hand HRM order; with
+ * those slots &trans the order comes from whichever base is active, so the twin was deleted.
  * -------------------------------------------------------------------------------------------------------------------------------------
  * |       |   =   |   7   |   8   |   9   |  - /  |-----------------------------------|       |       |       |       |       |       |
  * | ENTER |   :   |   4   |   5   |   6   |  + *  |-----------------------------------|       | trans | trans | trans | trans |       |
@@ -474,29 +474,8 @@ XXX          XXX                  &kp LG(N1)  &kp LG(N2)  &kp LG(N3)  &kp LG(T) 
                         >;
                 };
 
-                num_mac_layer {
-/* NUM macOS (reached from DEF_MAC) - numpad only, entirely on the left half: 789/456/123
- * Now BYTE-IDENTICAL to num_layer above: the right home row used to be the one place they differed
- * (mac puts Cmd on the index, Win puts Ctrl there), and it is &trans now, so the OS-correct order
- * arrives from the base layer by itself. The two layers are kept separate only until the merge
- * lands as its own change. Until then, any edit here MUST be mirrored into num_layer.
- * See num_layer's comment for why symbols and F-keys are gone and what that costs.
- * -------------------------------------------------------------------------------------------------------------------------------------
- * |       |   =   |   7   |   8   |   9   |  - /  |-----------------------------------|       |       |       |       |       |       |
- * | ENTER |   :   |   4   |   5   |   6   |  + *  |-----------------------------------|       | trans | trans | trans | trans |       |
- * | CALC  |  KP.  |   1   |   2   |   3   |   0   |       |-------------------|       |       |       |       |       |       |       |
- *                                 |       |       |       |       |---|       |       |       |       |
- */
-                        bindings = <
-XXX             &kp EQUAL  &kp N7 &kp N8 &kp N9 &td1 XXX                     XXX      XXX      XXX      XXX      XXX
-&kp ENTER        &kp COLON  &kp N4 &kp N5 &kp N6 &td2                        XXX         ___             ___              ___            ___            XXX
-&kp C_AL_CALC   &kp KP_DOT &kp N1 &kp N2 &kp N3 &kp N0 XXX              ___ ___    XXX         XXX         XXX         XXX         XXX
-                                                ___ ___ ___ ___     ___ ___ ___ ___
-                        >;
-                };
-
                 adj_layer {
-/* ADJUST - active when NUM+NAV (Win) or NUM_MAC+NAV_MAC (mac) held simultaneously | MAC/WIN switch OS base layer
+/* ADJUST - active when NUM+NAV (Win) or NUM+NAV_MAC (mac) held simultaneously | MAC/WIN switch OS base layer
  * Column 2 (MAC / BT 0) is the boot default — mac base lives on the first BT slot.
  * -------------------------------------------------------------------------------------------------------------------------------------
  * |       |  MAC  |  WIN  |       |       |       |-----------------------------------|       |  F11  |  F12  |PrtScr |EP_OFF | EP_ON |
