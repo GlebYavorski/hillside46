@@ -53,8 +53,16 @@
 // kills home-row-mod misfires mid-typing-burst. `global-quick-tap` used to tie the
 // two together (prior-idle == quick-tap-ms); it is deprecated in ZMK v0.3.0
 // (zmk,behavior-hold-tap.yaml), so they are set independently here.
+// HRM_PRIOR_IDLE_MS is the stricter window for the home-row mods (hml/hmr). It must
+// stay above ~175ms: the right half is the BLE peripheral, so its presses reach the
+// central late, and a fast cross-hand roll like H->F (RU "ра" in "управлять") arrives
+// as F-down, H-down, H-up - balanced resolves that as Cmd+H. The only thing standing
+// between that and a hidden window is the prior-idle gap back to the key before H,
+// which on a fast roll is ~150-175ms. PRIOR_IDLE_MS (thumbs: lt_t, app_bs_ht) stays
+// lower so a layer can be entered right after typing.
 #define QUICK_TAP_MS 175
 #define PRIOR_IDLE_MS 150
+#define HRM_PRIOR_IDLE_MS 200
 
 #include "combos.dtsi"
 
@@ -133,7 +141,7 @@
                         flavor = "balanced";
                         tapping-term-ms = <200>;
                         quick-tap-ms = <QUICK_TAP_MS>;
-                        require-prior-idle-ms = <PRIOR_IDLE_MS>;
+                        require-prior-idle-ms = <HRM_PRIOR_IDLE_MS>;
                         hold-trigger-key-positions = <6 7 8 9 10 11 18 19 20 21 22 23 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45>;
                         hold-trigger-on-release;
                         bindings = <&kp>, <&kp>;
@@ -145,7 +153,7 @@
                         flavor = "balanced";
                         tapping-term-ms = <200>;
                         quick-tap-ms = <QUICK_TAP_MS>;
-                        require-prior-idle-ms = <PRIOR_IDLE_MS>;
+                        require-prior-idle-ms = <HRM_PRIOR_IDLE_MS>;
                         hold-trigger-key-positions = <0 1 2 3 4 5 12 13 14 15 16 17 24 25 26 27 28 29 30 38 39 40 41 42 43 44 45>;
                         hold-trigger-on-release;
                         bindings = <&kp>, <&kp>;
