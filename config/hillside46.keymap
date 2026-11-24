@@ -14,6 +14,8 @@
 // sane order of tuning is the macOS "Tracking speed" slider first, these numbers only after.
 // Requires CONFIG_ZMK_POINTING=y in hillside46.conf.
 #include <dt-bindings/zmk/pointing.h>
+// zip_xy_scaler / zip_scroll_scaler (MSLOW / MFAST) are not pulled in by behaviors.dtsi.
+#include <input/processors.dtsi>
 
 // layer shortcuts, must match order in which they are defined below
 // bases (DEF_MAC, DEF) are lowest so momentary/overlay layers stack above them;
