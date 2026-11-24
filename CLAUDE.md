@@ -29,7 +29,10 @@ by default; Win/Lin requires an ADJ switch.
 | 5 | FZ      | FancyZones, snap, virtual desktops (Win)          |
 | 6 | NAV_MAC | Navigation for macOS — right half only            |
 | 7 | APP     | App tabs + splits (mac; 2nd-from-edge left thumb) |
-| 8 | ADJ     | Bluetooth, system, OS switching                   |
+| 8 | MOUSE   | Mouse keys (mac), toggled by pos 31 on DEF_MAC    |
+| 9 | MSLOW   | Transparent; held from MOUSE = slow pointer/wheel |
+| 10| MFAST   | Transparent; held from MOUSE = fast pointer/wheel |
+| 11| ADJ     | Bluetooth, system, OS switching                   |
 
 ADJ is activated via a conditional_layer when the NUM and NAV keys are held
 simultaneously — two tri_layer entries, one per base: `<NUM NAV>` and
@@ -83,7 +86,7 @@ RETURN thumbs, and Delete currently has no key at all. Not yet resolved.
 ## Target OSes (Win/Lin ↔ macOS)
 
 The config keeps two parallel bases:
-- **macOS** (default on boot, BT profile 0): layers DEF_MAC / NAV_MAC / APP
+- **macOS** (default on boot, BT profile 0): layers DEF_MAC / NAV_MAC / APP / MOUSE (+ MSLOW, MFAST)
 - **Win/Lin** (BT profile 1): layers DEF / NAV / WM / FZ
 - **shared by both**: NUM (numpad) and ADJ
 
@@ -181,6 +184,18 @@ order is correct for free. That is what let NUM_MAC be deleted entirely.
   - **Obsidian setup (one-time):** Settings → Hotkeys → search "Focus on tab group" and
     assign left/down/up/right to `Cmd+Opt+H/J/K/L`. Go-to-tab (`Cmd+1..8`), next/prev tab,
     and `Cmd+T`/`Cmd+W` are already native. No other app needs configuration.
+
+- **MOUSE (mouse keys)** — toggled on/off by **pos 31** on DEF_MAC (the right key that sits
+  above the thumb row; formerly `&mt RALT INSERT`). Modal: while on, no letters type.
+  Vim-style, matching NAV_MAC's arrows: HJKL = move pointer, YUIO = scroll wheel (← ↓ ↑ →),
+  right thumbs = LCLK/RCLK/MCLK, N/M/,/. = double click / back / triple click / forward.
+  Left: home row = plain Ctrl Opt Shift Cmd (same fingers as the mac HRM), Z X C V B =
+  Cmd+Z/X/C/V/Shift+Z, thumbs = FAST · SLOW · LCLK (the left LCLK is for dragging).
+  Speed modes are input-listener scalers keyed on the transparent MSLOW/MFAST layers.
+  Speeds are ZMK defaults (MOVE 600, SCRL 10, 300ms ramp) — tune the macOS "Tracking speed"
+  slider first. `CONFIG_ZMK_POINTING=y` changes the HID descriptor: after the first flash,
+  forget and re-pair the keyboard on the mac. Win base has no mouse layer (pos 31 there is
+  still INS); the MOUSE layer's mods are in mac order.
 
 ### Re-pair BT slots (mac → BT 0, Win → BT 1)
 

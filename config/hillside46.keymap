@@ -9,6 +9,11 @@
 #include <dt-bindings/zmk/ext_power.h>
 #include <dt-bindings/zmk/keys.h>
 #include <dt-bindings/zmk/outputs.h>
+// Mouse keys. ZMK_POINTING_DEFAULT_MOVE_VAL / _SCRL_VAL are left at ZMK's defaults (600 / 10):
+// macOS runs its own pointer-acceleration curve on top of whatever the keyboard sends, so the
+// sane order of tuning is the macOS "Tracking speed" slider first, these numbers only after.
+// Requires CONFIG_ZMK_POINTING=y in hillside46.conf.
+#include <dt-bindings/zmk/pointing.h>
 
 // layer shortcuts, must match order in which they are defined below
 // bases (DEF_MAC, DEF) are lowest so momentary/overlay layers stack above them;
@@ -27,7 +32,13 @@
 #define FZ 5
 #define NAV_MAC 6
 #define APP 7
-#define ADJ 8
+// MOUSE is toggled by pos 31 on DEF_MAC. MSLOW / MFAST are fully transparent layers held from
+// MOUSE's left thumbs; they exist only so the mmv/msc input listeners below can scale the
+// pointer and the wheel while they are active.
+#define MOUSE 8
+#define MSLOW 9
+#define MFAST 10
+#define ADJ 11
 
 /* Windows legacy clipboard encodings, so the combos also work in terminals where
  * Ctrl+C/V are taken. Undo/Redo have no such second encoding and are one HRM chord
@@ -75,6 +86,44 @@
 &caps_word {
     // Allow caps word to continue even when minus, delete, left or underscore are pressed.
     continue-list = <UNDERSCORE MINUS BACKSPACE DELETE LEFT>;
+};
+
+/* Mouse keys - ZMK v0.3.0 defaults, spelled out so they are easy to find and tune.
+ * mmv: the pointer ramps linearly (exponent 1) from 0 to full speed over 300ms - short taps
+ *      nudge it a few pixels, a held key crosses the screen. macOS adds its own acceleration.
+ * msc: the wheel runs at constant speed (exponent 0), no ramp-up.
+ * delay-ms unset = movement starts on press, no dead time. */
+&mmv {
+    time-to-max-speed-ms = <300>;
+    acceleration-exponent = <1>;
+};
+&msc {
+    time-to-max-speed-ms = <300>;
+    acceleration-exponent = <0>;
+};
+
+/* Speed modes: while MSLOW / MFAST is held (MOUSE's left thumbs) the generated deltas are
+ * scaled. Scaler params are <multiplier divisor>. track-remainders is on in ZMK's stock
+ * scalers, so slow mode loses no sub-pixel motion. */
+&mmv_input_listener {
+    mmv_slow {
+        layers = <MSLOW>;
+        input-processors = <&zip_xy_scaler 1 4>;
+    };
+    mmv_fast {
+        layers = <MFAST>;
+        input-processors = <&zip_xy_scaler 3 1>;
+    };
+};
+&msc_input_listener {
+    msc_slow {
+        layers = <MSLOW>;
+        input-processors = <&zip_scroll_scaler 1 3>;
+    };
+    msc_fast {
+        layers = <MFAST>;
+        input-processors = <&zip_scroll_scaler 3 1>;
+    };
 };
 
 / {
@@ -294,6 +343,22 @@
                         #binding-cells = <0>;
                         bindings = <&macro_press &kp LGUI>, <&macro_tap &kp DOWN>, <&macro_release &kp LGUI>;
                 };
+                // Double / triple left click (MOUSE layer). 20ms per step is far inside the
+                // macOS double-click interval, so the host always sees one multi-click.
+                dbl_clk: double_click_macro {
+                        compatible = "zmk,behavior-macro";
+                        #binding-cells = <0>;
+                        wait-ms = <20>;
+                        tap-ms = <20>;
+                        bindings = <&macro_tap &mkp LCLK &mkp LCLK>;
+                };
+                tpl_clk: triple_click_macro {
+                        compatible = "zmk,behavior-macro";
+                        #binding-cells = <0>;
+                        wait-ms = <20>;
+                        tap-ms = <20>;
+                        bindings = <&macro_tap &mkp LCLK &mkp LCLK &mkp LCLK>;
+                };
         };
 
 
@@ -316,16 +381,18 @@
  * HOLD and also risked emitting `]` instead of `[` mid-burst - the generic &mt has no
  * require-prior-idle-ms, unlike hml/hmr/lt_t. `]` now lives on the P+[ combo
  * (positions 10 11, see combos.dtsi). RU YCUKEN legend: [ = X, ] = hard sign.
+ * MOUSE (pos 31, the right key that sits above the thumb row) toggles the MOUSE layer on/off.
+ * It used to be `&mt RALT INSERT`; Right Alt is still on NAV_MAC (pos 22).
  * -------------------------------------------------------------------------------------------------------------------------------------
  * |  `    |   Q   |   W   |   E   |   R   |   T   |-----------------------------------|   Y   |   U   |   I   |   O   |   P   |   [   |
  * | G-Tab |   A   |   S   |   D   |   F   |   G   |-----------------------------------|   H   |   J   |   K   |   L   |   ;   |   '   |
- * |   -   |   Z   |   X   |   C   |   V   |   B   |  ESC  |-------------------|RA/INS |   N   |   M   |   ,   |   .   |   /   |   \   |
+ * |   -   |   Z   |   X   |   C   |   V   |   B   |  ESC  |-------------------| MOUSE |   N   |   M   |   ,   |   .   |   /   |   \   |
  *                                 |       |APP/TAB|NUM/SPC|HYP/ENT|HYP/OSH|NAV/CW |APP/BSP|       |
  */
                         bindings = <
 &kp GRAVE      &kp Q &kp W &kp E &kp R &kp T &kp Y                                                    &kp U   &kp I  &kp O   &kp P    &kp LBKT
 &kp LG(TAB)    &hml LCTRL A &hml LALT S &hml LSHIFT D &hml LGUI F  &kp G                              &kp H  &hmr RGUI J &hmr RSHIFT K &hmr LALT L &hmr RCTRL SEMI &kp SQT
-&kp MINUS      &kp Z &kp X &kp C &kp V &kp B   &kp ESC                               &mt RALT INSERT  &kp N  &kp M  &kp COMMA    &kp DOT &kp FSLH &kp BSLH
+&kp MINUS      &kp Z &kp X &kp C &kp V &kp B   &kp ESC                               &tog MOUSE       &kp N  &kp M  &kp COMMA    &kp DOT &kp FSLH &kp BSLH
                                 XXX &lt_t APP TAB &lt_t NUM SPACE &mt HYPER_HOLD RETURN     &hyper_ht HYPER_HOLD HYPER_HOLD &cw_ht NAV_MAC 0 &app_bs_ht APP 0 XXX
                         >;
                 };
@@ -479,6 +546,69 @@ XXX          &kp LG(LS(N5))       &kp LG(N7)  &kp LG(N8)  &kp LG(N9)  &kp LC(LS(
 &kp LG(W)    &kp LG(LC(LS(N4)))   &kp LG(N4)  &kp LG(N5)  &kp LG(N6)  &kp LC(TAB)                                      &kp LG(LA(H))      &kp LG(LA(J))      &kp LG(LA(K))      &kp LG(LA(L))      XXX  XXX
 XXX          XXX                  &kp LG(N1)  &kp LG(N2)  &kp LG(N3)  &kp LG(T)  ___                            ___    &kp LG(D)          &kp LG(LA(MINUS))  &kp LG(LA(EQUAL))  &kp LG(LS(D))      XXX  XXX
                                                                                        ___ ___ ___ ___                          ___ ___ ___ ___
+                        >;
+                };
+
+                mouse_layer {
+/* MOUSE (mac) - toggled on/off by pos 31 (DEF_MAC). Modal: while it is on, nothing types letters.
+ * right hand, vim-style like the arrows on NAV_MAC:
+ *   H J K L = move pointer  <- v ^ ->         (NAV_MAC: arrows on the same keys)
+ *   Y U I O = scroll wheel  <- v ^ ->         (NAV_MAC: PgDn/PgUp on U/I)
+ *   N = double click | M = MB4 (back) | , = triple click | . = MB5 (forward)
+ *   thumbs: LCLK · RCLK · MCLK
+ * left hand:
+ *   home row = plain Ctrl Opt Shift Cmd, same fingers as the mac HRM (plain &kp, not hold-taps:
+ *   no timing, so Cmd+click / Shift+click / Opt+drag always work)
+ *   Z X C V B = Cmd+Z/X/C/V, Cmd+Shift+Z (undo/cut/copy/paste/redo) | G-Tab and ESC fall through
+ *   thumbs: FAST (hold: pointer x3, wheel x3) · SLOW (hold: pointer /4, wheel /3) · LCLK
+ *   LCLK on the left inner thumb is for dragging: hold it, steer with HJKL.
+ * Combos do not fire here (gated by highest active layer), so rolls like H+J cannot misfire.
+ * Scroll direction follows the macOS "Natural scrolling" setting (shared by mouse and trackpad).
+ * -------------------------------------------------------------------------------------------------------------------------------------
+ * |       |       |       |       |       |       |-----------------------------------| SC <- | SC v  | SC ^  | SC -> |       |       |
+ * | trans | LCTRL | LALT  |LSHIFT | LGUI  |       |-----------------------------------| MV <- | MV v  | MV ^  | MV -> |       |       |
+ * |       |  G-Z  |  G-X  |  G-C  |  G-V  | GS-Z  | trans |-------------------| MOUSE | DBLCLK|  MB4  | TPLCLK|  MB5  |       |       |
+ *                                 |       | FAST  | SLOW  | LCLK  |---| LCLK  | RCLK  | MCLK  |       |
+ */
+                        bindings = <
+XXX            XXX         XXX    XXX      XXX         XXX                                      &msc SCRL_LEFT &msc SCRL_DOWN &msc SCRL_UP  &msc SCRL_RIGHT XXX XXX
+___            &kp LCTRL   &kp LALT &kp LSHIFT &kp LGUI XXX                                     &mmv MOVE_LEFT &mmv MOVE_DOWN &mmv MOVE_UP  &mmv MOVE_RIGHT XXX XXX
+XXX            &kp LG(Z)   &kp LG(X) &kp LG(C) &kp LG(V) &kp LG(LS(Z)) ___          &tog MOUSE  &dbl_clk       &mkp MB4       &tpl_clk      &mkp MB5        XXX XXX
+                                XXX &mo MFAST &mo MSLOW &mkp LCLK                 &mkp LCLK &mkp RCLK &mkp MCLK XXX
+                        >;
+                };
+
+                mslow_layer {
+/* MSLOW - fully transparent. Held from MOUSE (left middle thumb); it only exists so that
+ * &mmv_input_listener / &msc_input_listener apply their slow scalers while it is active.
+ * -------------------------------------------------------------------------------------------------------------------------------------
+ * | trans | trans | trans | trans | trans | trans |-----------------------------------| trans | trans | trans | trans | trans | trans |
+ * | trans | trans | trans | trans | trans | trans |-----------------------------------| trans | trans | trans | trans | trans | trans |
+ * | trans | trans | trans | trans | trans | trans | trans |-------------------| trans | trans | trans | trans | trans | trans | trans |
+ *                                 | trans | trans | trans | trans |---| trans | trans | trans | trans |
+ */
+                        bindings = <
+___ ___ ___ ___ ___ ___                 ___ ___ ___ ___ ___ ___
+___ ___ ___ ___ ___ ___                 ___ ___ ___ ___ ___ ___
+___ ___ ___ ___ ___ ___ ___         ___ ___ ___ ___ ___ ___ ___
+                ___ ___ ___ ___     ___ ___ ___ ___
+                        >;
+                };
+
+                mfast_layer {
+/* MFAST - fully transparent. Held from MOUSE (left outer reachable thumb); it only exists so
+ * that the input listeners apply their fast scalers while it is active.
+ * -------------------------------------------------------------------------------------------------------------------------------------
+ * | trans | trans | trans | trans | trans | trans |-----------------------------------| trans | trans | trans | trans | trans | trans |
+ * | trans | trans | trans | trans | trans | trans |-----------------------------------| trans | trans | trans | trans | trans | trans |
+ * | trans | trans | trans | trans | trans | trans | trans |-------------------| trans | trans | trans | trans | trans | trans | trans |
+ *                                 | trans | trans | trans | trans |---| trans | trans | trans | trans |
+ */
+                        bindings = <
+___ ___ ___ ___ ___ ___                 ___ ___ ___ ___ ___ ___
+___ ___ ___ ___ ___ ___                 ___ ___ ___ ___ ___ ___
+___ ___ ___ ___ ___ ___ ___         ___ ___ ___ ___ ___ ___ ___
+                ___ ___ ___ ___     ___ ___ ___ ___
                         >;
                 };
 
